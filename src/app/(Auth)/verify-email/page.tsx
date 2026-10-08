@@ -1,0 +1,38 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { BackArrow, VerifyEmailIcon } from "@/public/svg/svg";
+
+export default function VerifyEmailPage() {
+  const router = useRouter();
+
+  return (
+    <div className="w-full max-w-[400px] bg-white rounded-lg shadow-md px-6 sm:px-8 py-16  ">
+      <div className="mb-8 text-center">
+        <div className="flex items-center justify-center mb-4">
+          <VerifyEmailIcon size={40} className="mx-auto mb-4 " />
+        </div>
+        <h1 className="text-2xl font-semibold text-gray-900">Check your Email</h1>
+        <p className="text-sm text-gray-500 mt-4">
+          If an account exists, a reset link has been sent. It expires in 5 minutes.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => router.push("/set-password")}
+        className="w-full bg-[#2D266C] text-white font-medium py-3.5 rounded-lg transition-colors"
+      >
+        Continue to set password
+      </button>
+
+      <Link
+        href="/login"
+        className="text-xs text-[#2D266C] text-center font-medium transition-colors flex items-center justify-center gap-2 pt-4"
+      >
+        <BackArrow size={16} /> Back to sign in
+      </Link>
+    </div>
+  );
+}
