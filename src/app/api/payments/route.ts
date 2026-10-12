@@ -1,21 +1,29 @@
 import { NextResponse } from "next/server";
+import { handleRouteError, requireAdmin, requireWriter } from "@/src/lib/auth";
 import {
   createId,
   formatDisplayDate,
   formatNotificationTime,
+  insertNotification,
+  insertPayment,
+  listPayments,
   makeInitials,
-  readStore,
-  writeStore,
 } from "@/src/lib/store";
 import type { Payment } from "@/src/lib/types";
 
 export async function GET() {
-  const store = await readStore();
-  return NextResponse.json({ payments: store.payments });
+  try {
+    await requireAdmin();
+    const payments = await listPayments();
+    return NextResponse.json({ payments });
+  } catch (err) {
+    return handleRouteError(err);
+  }
 }
 
 export async function POST(request: Request) {
   try {
+    await requireWriter();
     const body = await request.json();
     const name = String(body.name || "").trim();
     const amount = String(body.amount || "").trim();
@@ -33,7 +41,6 @@ export async function POST(request: Request) {
       );
     }
 
-    const store = await readStore();
     const now = new Date();
     const payment: Payment = {
       id: createId(),
@@ -48,10 +55,10 @@ export async function POST(request: Request) {
       createdAt: now.toISOString(),
     };
 
-    store.payments.unshift(payment);
+    const saved = await insertPayment(payment);
 
     const stamp = formatNotificationTime(now);
-    store.notifications.unshift({
+    await insertNotification({
       id: createId(),
       text: `A payment of ${paidAmount} was recorded for ${name}.`,
       time: stamp.time,
@@ -60,14 +67,8 @@ export async function POST(request: Request) {
       createdAt: now.toISOString(),
     });
 
-    await writeStore(store);
-    return NextResponse.json({ payment });
+    return NextResponse.json({ payment: saved });
   } catch (err) {
-    return NextResponse.json(
-      {
-        error: err instanceof Error ? err.message : "Failed to create payment",
-      },
-      { status: 500 },
-    );
+    return handleRouteError(err);
   }
 }

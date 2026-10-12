@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { apiFetch } from "@/src/lib/api";
+import { useAuth, type SessionAdmin } from "@/src/components/AuthProvider";
 
 const ITEMS = [
-  { key: "client", label: "Client" },
-  { key: "payment", label: "Payment" },
-  { key: "service", label: "Service" },
-  { key: "teamActivity", label: "Team Activity" },
-  { key: "systemNotice", label: "System Notice" },
+  { key: "notifyClient", label: "Client" },
+  { key: "notifyPayment", label: "Payment" },
+  { key: "notifyService", label: "Service" },
+  { key: "notifyTeam", label: "Team Activity" },
+  { key: "notifySystem", label: "System Notice" },
 ] as const;
 
 type Key = (typeof ITEMS)[number]["key"];
@@ -42,17 +43,20 @@ function Toggle({
 }
 
 export default function NotificationsTab() {
-  const [prefs, setPrefs] = useState<Record<Key, boolean>>({
-    client: true,
-    payment: true,
-    service: true,
-    teamActivity: true,
-    systemNotice: false,
-  });
+  const { admin, setAdmin } = useAuth();
 
-  const toggle = (key: Key) => {
-    // TODO: persist preference to backend
-    setPrefs((p) => ({ ...p, [key]: !p[key] }));
+  const toggle = async (key: Key) => {
+    if (!admin) return;
+    const next = { [key]: !admin[key] };
+    try {
+      const data = await apiFetch<{ admin: SessionAdmin }>("/api/auth/profile", {
+        method: "PATCH",
+        body: JSON.stringify(next),
+      });
+      setAdmin(data.admin);
+    } catch {
+      // keep previous prefs
+    }
   };
 
   return (
@@ -65,7 +69,7 @@ export default function NotificationsTab() {
           <li key={key} className="flex items-center justify-between">
             <span className="text-sm text-gray-700">{label}</span>
             <Toggle
-              checked={prefs[key]}
+              checked={Boolean(admin?.[key])}
               onChange={() => toggle(key)}
               label={`${label} notifications`}
             />

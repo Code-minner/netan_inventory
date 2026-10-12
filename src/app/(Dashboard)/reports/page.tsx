@@ -1,16 +1,33 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { useEffect, useState } from "react";
 import ReportStatCards from "./components/ReportStatCards";
 import ClientsGrowthChart from "./components/ClientsGrowthChart";
 import ClientStatusChart from "./components/ClientStatusChart";
 import GenerateReportModal from "./components/GenerateReportModal";
+import { apiFetch } from "@/src/lib/api";
+
+type ReportsData = {
+  year: number;
+  stats: {
+    totalClients: number;
+    newClients: number;
+    activeClients: number;
+    inactiveClients: number;
+    change: number;
+  };
+  growth: { month: string; clients: number }[];
+};
 
 export default function ReportsPage() {
-  const [dateRange] = useState("Date Range");
-  const [reportType] = useState("Client Report");
   const [generateOpen, setGenerateOpen] = useState(false);
+  const [data, setData] = useState<ReportsData | null>(null);
+
+  useEffect(() => {
+    apiFetch<ReportsData>("/api/reports")
+      .then(setData)
+      .catch(() => setData(null));
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -31,22 +48,17 @@ export default function ReportsPage() {
         </button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <button className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-600 bg-white border border-gray-200 rounded-xl">
-          {dateRange}
-          <ChevronDown size={14} />
-        </button>
-        <button className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-600 bg-white border border-gray-200 rounded-xl">
-          {reportType}
-          <ChevronDown size={14} />
-        </button>
-      </div>
-
-      <ReportStatCards />
+      <ReportStatCards stats={data?.stats} />
 
       <div className="grid grid-cols-1 lg:grid-cols-[65%_35%] gap-5">
-        <ClientsGrowthChart />
-        <ClientStatusChart />
+        <ClientsGrowthChart
+          year={String(data?.year || new Date().getFullYear())}
+          data={data?.growth || []}
+        />
+        <ClientStatusChart
+          active={data?.stats.activeClients || 0}
+          inactive={data?.stats.inactiveClients || 0}
+        />
       </div>
 
       <GenerateReportModal

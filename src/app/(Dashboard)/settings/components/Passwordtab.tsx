@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { apiFetch } from "@/src/lib/api";
 
 function EyeIcon({ off }: { off: boolean }) {
   return (
@@ -69,8 +70,9 @@ export default function PasswordTab() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
     setMessage("");
@@ -82,11 +84,21 @@ export default function PasswordTab() {
       setError("New passwords do not match.");
       return;
     }
-    // TODO: call backend to change password
-    setOldPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
-    setMessage("Password updated.");
+    setSaving(true);
+    try {
+      await apiFetch("/api/auth/password", {
+        method: "POST",
+        body: JSON.stringify({ oldPassword, newPassword }),
+      });
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setMessage("Password updated.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not update password");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -132,9 +144,10 @@ export default function PasswordTab() {
 
       <button
         type="submit"
-        className="text-sm font-medium text-white bg-[#2D266C] hover:bg-[#241f58] rounded-lg px-4 py-2.5"
+        disabled={saving}
+        className="text-sm font-medium text-white bg-[#2D266C] hover:bg-[#241f58] rounded-lg px-4 py-2.5 disabled:opacity-60"
       >
-        Save changes
+        {saving ? "Saving…" : "Save changes"}
       </button>
     </form>
   );

@@ -1,22 +1,29 @@
 import { NextResponse } from "next/server";
-import { readStore, writeStore } from "@/src/lib/store";
+import { handleRouteError, requireAdmin } from "@/src/lib/auth";
+import {
+  listNotifications,
+  markAllNotificationsRead,
+} from "@/src/lib/store";
 
 export async function GET() {
-  const store = await readStore();
-  return NextResponse.json({ notifications: store.notifications });
+  try {
+    await requireAdmin();
+    const notifications = await listNotifications();
+    return NextResponse.json({ notifications });
+  } catch (err) {
+    return handleRouteError(err);
+  }
 }
 
 export async function PATCH(request: Request) {
-  const body = await request.json().catch(() => ({}));
-  const store = await readStore();
-
-  if (body.markAllRead) {
-    store.notifications = store.notifications.map((n) => ({
-      ...n,
-      unread: false,
-    }));
-    await writeStore(store);
+  try {
+    await requireAdmin();
+    const body = await request.json().catch(() => ({}));
+    const notifications = body.markAllRead
+      ? await markAllNotificationsRead()
+      : await listNotifications();
+    return NextResponse.json({ notifications });
+  } catch (err) {
+    return handleRouteError(err);
   }
-
-  return NextResponse.json({ notifications: store.notifications });
 }

@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useSidebar } from "./SidebarContext";
+import { useAuth } from "./AuthProvider";
 import {
   CloseIcon,
   DashboardIcon,
@@ -25,11 +26,11 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const router = useRouter();
   const { isOpen, close } = useSidebar();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    router.push("/login");
+    void logout();
   };
 
   return (

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { BellIcon, MenuIcon } from "../../public/svg/svg";
 import { useSidebar } from "./SidebarContext";
-import { CURRENT_ADMIN } from "@/src/lib/mock-data";
+import { useAuth } from "./AuthProvider";
 import NotificationsPanel from "./NotificationsPanel";
 
 const titles: Record<string, string> = {
@@ -20,15 +20,11 @@ const titles: Record<string, string> = {
 export default function Header() {
   const pathname = usePathname();
   const { toggle } = useSidebar();
+  const { admin } = useAuth();
   const title = titles[pathname] ?? "";
-  const admin = CURRENT_ADMIN;
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const displayName = admin.name?.trim() || admin.email.split("@")[0];
-  const initials = displayName
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
-    .join("");
+  const displayName = admin?.name?.trim() || admin?.email?.split("@")[0] || "Staff";
+  const initials = admin?.initials || "NA";
 
   return (
     <>
@@ -55,7 +51,7 @@ export default function Header() {
 
           <div className="flex items-center gap-2 pl-1">
             <div className="w-9 h-9 rounded-full bg-[#E6EDE8] text-[#2D266C] flex items-center justify-center text-xs font-semibold shrink-0 overflow-hidden relative">
-              {admin.avatarUrl ? (
+              {admin?.avatarUrl ? (
                 <Image
                   src={admin.avatarUrl}
                   alt={displayName}
@@ -73,7 +69,7 @@ export default function Header() {
                 {displayName}
               </p>
               <p className="text-xs text-gray-500 truncate max-w-[140px]">
-                {admin.email}
+                {admin?.email || ""}
               </p>
             </div>
           </div>

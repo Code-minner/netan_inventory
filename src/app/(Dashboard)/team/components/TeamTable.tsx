@@ -6,6 +6,7 @@ import InviteMemberModal from "./InviteMemberModal";
 import Modal from "@/src/components/Modal";
 import { apiFetch } from "@/src/lib/api";
 import type { MemberStatus, TeamMember } from "@/src/lib/types";
+import { useAuth } from "@/src/components/AuthProvider";
 
 function StatusBadge({ status }: { status: MemberStatus }) {
   const styles =
@@ -28,6 +29,7 @@ export default function TeamTable() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const { canWrite } = useAuth();
   const [inviteOpen, setInviteOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
@@ -59,14 +61,16 @@ export default function TeamTable() {
     <div className="bg-white rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-gray-100 p-6 sm:p-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6">
         <h2 className="text-base font-semibold text-gray-900">Team Member</h2>
-        <button
-          type="button"
-          onClick={() => setInviteOpen(true)}
-          className="flex items-center justify-center gap-2 bg-[#2E2A5C] text-white px-5 py-3 rounded-xl text-sm font-medium hover:bg-[#25214a]"
-        >
-          <span className="text-base leading-none">+</span>
-          Invite Member
-        </button>
+        {canWrite ? (
+          <button
+            type="button"
+            onClick={() => setInviteOpen(true)}
+            className="flex items-center justify-center gap-2 bg-[#2E2A5C] text-white px-5 py-3 rounded-xl text-sm font-medium hover:bg-[#25214a]"
+          >
+            <span className="text-base leading-none">+</span>
+            Invite Member
+          </button>
+        ) : null}
       </div>
 
       <div className="relative w-full sm:w-72 pb-6">

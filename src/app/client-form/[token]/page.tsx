@@ -15,6 +15,10 @@ type FormClient = {
   duration: string;
   notes: string;
   servicesCount: number;
+  projectName: string;
+  projectDescription: string;
+  budget: string;
+  goals: string;
 };
 
 export default function ClientFormPage() {
@@ -31,6 +35,10 @@ export default function ClientFormPage() {
   const [serviceType, setServiceType] = useState("");
   const [duration, setDuration] = useState("1 Month");
   const [servicesCount, setServicesCount] = useState("1");
+  const [projectName, setProjectName] = useState("");
+  const [projectDescription, setProjectDescription] = useState("");
+  const [budget, setBudget] = useState("");
+  const [goals, setGoals] = useState("");
   const [notes, setNotes] = useState("");
 
   useEffect(() => {
@@ -46,6 +54,10 @@ export default function ClientFormPage() {
         setServiceType(data.client.serviceType || "");
         setDuration(data.client.duration || "1 Month");
         setServicesCount(String(data.client.servicesCount || 1));
+        setProjectName(data.client.projectName || "");
+        setProjectDescription(data.client.projectDescription || "");
+        setBudget(data.client.budget || "");
+        setGoals(data.client.goals || "");
         setNotes(data.client.notes || "");
         if (data.client.formStatus === "completed") setDone(true);
       } catch (err) {
@@ -73,6 +85,10 @@ export default function ClientFormPage() {
           serviceType,
           duration,
           servicesCount: Number(servicesCount) || 1,
+          projectName,
+          projectDescription,
+          budget,
+          goals,
           notes,
         }),
       });
@@ -92,10 +108,10 @@ export default function ClientFormPage() {
             Netan
           </p>
           <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900">
-            Client onboarding form
+            Project onboarding form
           </h1>
           <p className="text-sm text-gray-500 mt-2">
-            Fill in your details so we can set up your services.
+            Tell us about your company and the project we&apos;ll be working on.
           </p>
         </div>
 
@@ -110,8 +126,8 @@ export default function ClientFormPage() {
                 Form submitted
               </h2>
               <p className="text-sm text-gray-500">
-                Thanks{client?.name ? `, ${client.name}` : ""}. Your details have
-                been sent to the Netan team.
+                Thanks{client?.name ? `, ${client.name}` : ""}. Your project
+                details have been sent to the Netan team.
               </p>
             </div>
           ) : (
@@ -128,6 +144,28 @@ export default function ClientFormPage() {
                 required
                 placeholder="Your company name"
               />
+
+              <Field
+                label="Project name"
+                value={projectName}
+                onChange={setProjectName}
+                required
+                placeholder="e.g. Brand refresh & website"
+              />
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Project description
+                </label>
+                <textarea
+                  value={projectDescription}
+                  onChange={(e) => setProjectDescription(e.target.value)}
+                  required
+                  rows={4}
+                  placeholder="What should we build or deliver?"
+                  className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none resize-none focus:border-[#2E2A5C]/50"
+                />
+              </div>
 
               <Field
                 label="Service type"
@@ -167,14 +205,34 @@ export default function ClientFormPage() {
                 </div>
               </div>
 
+              <Field
+                label="Budget (optional)"
+                value={budget}
+                onChange={setBudget}
+                placeholder="e.g. ₦1,500,000"
+              />
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Notes
+                  Goals / requirements
+                </label>
+                <textarea
+                  value={goals}
+                  onChange={(e) => setGoals(e.target.value)}
+                  rows={3}
+                  placeholder="What does success look like?"
+                  className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none resize-none focus:border-[#2E2A5C]/50"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Extra notes
                 </label>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  rows={4}
+                  rows={3}
                   placeholder="Anything else we should know?"
                   className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none resize-none focus:border-[#2E2A5C]/50"
                 />
@@ -191,7 +249,7 @@ export default function ClientFormPage() {
                 disabled={submitting}
                 className="w-full py-3.5 rounded-xl bg-[#2E2A5C] text-white text-sm font-medium hover:bg-[#25214a] disabled:opacity-60"
               >
-                {submitting ? "Submitting…" : "Submit form"}
+                {submitting ? "Submitting…" : "Submit project details"}
               </button>
             </form>
           )}

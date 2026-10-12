@@ -1,17 +1,32 @@
-// app/reports/components/ClientStatusChart.tsx
 "use client";
 
 import { PieChart, Pie, Cell } from "recharts";
 
-const DATA = [
-  { name: "Active", value: 32, percent: "84%", color: "#2E2A5C" },
-  { name: "Inactive", value: 6, percent: "12%", color: "#F97316" },
-];
-
-const TOTAL = 38;
 const SIZE = 170;
 
-export default function ClientStatusChart() {
+export default function ClientStatusChart({
+  active,
+  inactive,
+}: {
+  active: number;
+  inactive: number;
+}) {
+  const total = active + inactive;
+  const data = [
+    {
+      name: "Active",
+      value: active,
+      percent: total ? `${Math.round((active / total) * 100)}%` : "0%",
+      color: "#2E2A5C",
+    },
+    {
+      name: "Inactive",
+      value: inactive,
+      percent: total ? `${Math.round((inactive / total) * 100)}%` : "0%",
+      color: "#F97316",
+    },
+  ];
+
   return (
     <div className="bg-white rounded-xl border border-gray-100 p-7 w-full h-full">
       <h3 className="text-sm font-semibold text-gray-900 mb-6">Client Status</h3>
@@ -20,7 +35,7 @@ export default function ClientStatusChart() {
         <div className="relative shrink-0" style={{ width: SIZE, height: SIZE }}>
           <PieChart width={SIZE} height={SIZE} className="w-full h-full pr-2 pb-2">
             <Pie
-              data={DATA}
+              data={total ? data : [{ name: "Empty", value: 1, color: "#E5E7EB" }]}
               dataKey="value"
               cx={SIZE / 2}
               cy={SIZE / 2}
@@ -32,19 +47,19 @@ export default function ClientStatusChart() {
               stroke="none"
               isAnimationActive={false}
             >
-              {DATA.map((entry) => (
+              {(total ? data : [{ name: "Empty", color: "#E5E7EB" }]).map((entry) => (
                 <Cell key={entry.name} fill={entry.color} />
               ))}
             </Pie>
           </PieChart>
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-xl font-semibold text-gray-900">{TOTAL}</span>
+            <span className="text-xl font-semibold text-gray-900">{total}</span>
             <span className="text-xs text-gray-400">Total Clients</span>
           </div>
         </div>
 
         <div className="flex flex-col gap-6">
-          {DATA.map((entry) => (
+          {data.map((entry) => (
             <div key={entry.name} className="flex items-center gap-3 text-sm">
               <span
                 className="w-2.5 h-2.5 rounded-full shrink-0"

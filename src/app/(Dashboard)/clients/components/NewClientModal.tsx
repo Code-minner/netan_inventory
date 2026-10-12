@@ -20,6 +20,8 @@ export default function NewClientModal({ isOpen, onClose, onCreated }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [formUrl, setFormUrl] = useState("");
+  const [copied, setCopied] = useState(false);
 
   const reset = () => {
     setName("");
@@ -29,6 +31,8 @@ export default function NewClientModal({ isOpen, onClose, onCreated }: Props) {
     setDuration("1 Month");
     setError("");
     setSuccess("");
+    setFormUrl("");
+    setCopied(false);
   };
 
   const handleClose = () => {
@@ -45,6 +49,7 @@ export default function NewClientModal({ isOpen, onClose, onCreated }: Props) {
     try {
       const data = await apiFetch<{
         client: Client;
+        formUrl: string;
         emailSent: boolean;
         emailError?: string;
       }>("/api/clients", {
@@ -60,19 +65,15 @@ export default function NewClientModal({ isOpen, onClose, onCreated }: Props) {
       });
 
       onCreated?.(data.client);
+      setFormUrl(data.formUrl);
 
       if (data.emailSent) {
         setSuccess("Client added. Form invite email sent.");
       } else {
         setSuccess(
-          `Client added, but email failed${data.emailError ? `: ${data.emailError}` : "."}`,
+          `Client added, but email failed${data.emailError ? `: ${data.emailError}` : "."} Copy the form link below and send it yourself.`,
         );
       }
-
-      setTimeout(() => {
-        reset();
-        onClose();
-      }, 900);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to add client");
     } finally {
@@ -99,10 +100,10 @@ export default function NewClientModal({ isOpen, onClose, onCreated }: Props) {
           <button
             type="submit"
             form="new-client-form"
-            disabled={loading}
+            disabled={loading || Boolean(formUrl)}
             className="px-5 py-2.5 text-sm font-medium text-white bg-[#2E2A5C] rounded-xl hover:bg-[#25214a] disabled:opacity-60"
           >
-            {loading ? "Adding…" : "Add Client"}
+            {loading ? "Adding…" : formUrl ? "Added" : "Add Client"}
           </button>
         </>
       }
@@ -191,6 +192,27 @@ export default function NewClientModal({ isOpen, onClose, onCreated }: Props) {
           <p className="text-sm text-green-600 bg-green-50 rounded-xl px-3 py-2.5">
             {success}
           </p>
+        ) : null}
+        {formUrl ? (
+          <div className="rounded-xl border border-dashed border-gray-200 px-3.5 py-3">
+            <p className="text-xs text-gray-400 mb-1">Customer form link</p>
+            <p className="text-sm text-[#2E2A5C] break-all">{formUrl}</p>
+            <button
+              type="button"
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(formUrl);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 1500);
+                } catch {
+                  setCopied(false);
+                }
+              }}
+              className="mt-2 text-sm font-medium text-[#2E2A5C] hover:underline"
+            >
+              {copied ? "Copied" : "Copy link"}
+            </button>
+          </div>
         ) : null}
       </form>
     </Modal>

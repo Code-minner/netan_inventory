@@ -4,8 +4,10 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import ClientsTable from "./components/ClientsTable";
 import NewClientModal from "./components/NewClientModal";
+import { useAuth } from "@/src/components/AuthProvider";
 
 export default function ClientsPage() {
+  const { canWrite } = useAuth();
   const [newClientOpen, setNewClientOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -20,14 +22,16 @@ export default function ClientsPage() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setNewClientOpen(true)}
-          className="flex items-center justify-center gap-2 bg-[#2E2A5C] text-white px-5 py-3 rounded-xl text-sm font-medium hover:bg-[#25214a] shrink-0"
-        >
-          <Plus size={16} />
-          New Client
-        </button>
+        {canWrite ? (
+          <button
+            type="button"
+            onClick={() => setNewClientOpen(true)}
+            className="flex items-center justify-center gap-2 bg-[#2E2A5C] text-white px-5 py-3 rounded-xl text-sm font-medium hover:bg-[#25214a] shrink-0"
+          >
+            <Plus size={16} />
+            New Client
+          </button>
+        ) : null}
       </div>
 
       <ClientsTable refreshKey={refreshKey} />

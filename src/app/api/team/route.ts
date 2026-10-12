@@ -1,70 +1,110 @@
 import { NextResponse } from "next/server";
 import { inviteMemberEmailHtml, sendEmail } from "@/src/lib/mail";
 import {
+  AuthError,
+  handleRouteError,
+  requireAdmin,
+  requireWriter,
+} from "@/src/lib/auth";
+import { canInviteRole, canManageTeam, isValidRole } from "@/src/lib/roles";
+import {
   createId,
+  findTeamByEmail,
   formatDisplayDate,
   formatNotificationTime,
+  insertNotification,
+  insertTeamMember,
+  listTeam,
   makeInitials,
-  readStore,
-  writeStore,
+  updateTeamMember,
 } from "@/src/lib/store";
 import type { TeamMember } from "@/src/lib/types";
 
 export async function GET() {
-  const store = await readStore();
-  return NextResponse.json({ team: store.team });
+  try {
+    await requireAdmin();
+    const team = await listTeam();
+    return NextResponse.json({ team });
+  } catch (err) {
+    return handleRouteError(err);
+  }
 }
 
 export async function POST(request: Request) {
   try {
+    const actor = await requireWriter();
+    if (!canManageTeam(actor.role)) {
+      throw new AuthError(403, "You don't have permission to invite members.");
+    }
+
     const body = await request.json();
     const name = String(body.name || "").trim();
     const email = String(body.email || "").trim().toLowerCase();
     const role = String(body.role || "Admin").trim();
 
     if (!name || !email) {
-      return NextResponse.json(
-        { error: "Name and email are required." },
-        { status: 400 },
-      );
+      throw new AuthError(400, "Name and email are required.");
+    }
+    if (!isValidRole(role)) {
+      throw new AuthError(400, "Choose Superadmin, Admin, or Viewer.");
+    }
+    if (!canInviteRole(actor.role, role)) {
+      throw new AuthError(403, "You can't assign that role.");
     }
 
-    const store = await readStore();
-    if (store.team.some((m) => m.email === email)) {
-      return NextResponse.json(
-        { error: "A member with this email already exists." },
-        { status: 400 },
-      );
+    const existing = await findTeamByEmail(email);
+    if (existing && existing.status === "Active") {
+      throw new AuthError(400, "A member with this email already exists.");
     }
 
     const now = new Date();
-    const member: TeamMember = {
-      id: createId(),
-      name,
-      initials: makeInitials(name),
-      email,
-      role,
-      joined: formatDisplayDate(now),
-      status: "Invited",
-      createdAt: now.toISOString(),
-    };
+    const inviteToken = `inv_${createId()}`;
+    const inviteExpiresAt = new Date(
+      Date.now() + 7 * 24 * 60 * 60 * 1000,
+    ).toISOString();
 
-    store.team.unshift(member);
+    let member: TeamMember;
+    if (existing) {
+      member = (await updateTeamMember(existing.id, {
+        name,
+        initials: makeInitials(name),
+        role,
+        status: "Invited",
+        inviteToken,
+        inviteExpiresAt,
+      })) as TeamMember;
+    } else {
+      member = await insertTeamMember({
+        id: createId(),
+        name,
+        initials: makeInitials(name),
+        email,
+        role,
+        joined: formatDisplayDate(now),
+        status: "Invited",
+        inviteToken,
+        inviteExpiresAt,
+        notifyClient: true,
+        notifyPayment: true,
+        notifyService: true,
+        notifyTeam: true,
+        notifySystem: false,
+        createdAt: now.toISOString(),
+      });
+    }
 
     const stamp = formatNotificationTime(now);
-    store.notifications.unshift({
+    await insertNotification({
       id: createId(),
-      text: `Admin invited ${name} to the workspace.`,
+      text: `${actor.name} invited ${name} to the workspace.`,
       time: stamp.time,
       unread: true,
       dateGroup: stamp.dateGroup,
       createdAt: now.toISOString(),
     });
 
-    await writeStore(store);
-
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
-    const inviteUrl = `${frontendUrl}/register?email=${encodeURIComponent(email)}`;
+    const inviteUrl = `${frontendUrl}/register?token=${encodeURIComponent(inviteToken)}`;
 
     let emailSent = true;
     let emailError: string | undefined;
@@ -80,13 +120,13 @@ export async function POST(request: Request) {
       emailError = err instanceof Error ? err.message : "Failed to send email";
     }
 
-    return NextResponse.json({ member, emailSent, emailError, inviteUrl });
+    return NextResponse.json({
+      member,
+      emailSent,
+      emailError,
+      inviteUrl,
+    });
   } catch (err) {
-    return NextResponse.json(
-      {
-        error: err instanceof Error ? err.message : "Failed to invite member",
-      },
-      { status: 500 },
-    );
+    return handleRouteError(err);
   }
 }

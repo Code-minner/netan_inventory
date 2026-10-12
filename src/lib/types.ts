@@ -18,6 +18,10 @@ export type Client = {
   company?: string;
   serviceType?: string;
   notes?: string;
+  projectName?: string;
+  projectDescription?: string;
+  budget?: string;
+  goals?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -43,6 +47,17 @@ export type TeamMember = {
   role: string;
   joined: string;
   status: MemberStatus;
+  authUserId?: string;
+  inviteToken?: string;
+  inviteExpiresAt?: string;
+  resetToken?: string;
+  resetExpiresAt?: string;
+  avatarUrl?: string;
+  notifyClient: boolean;
+  notifyPayment: boolean;
+  notifyService: boolean;
+  notifyTeam: boolean;
+  notifySystem: boolean;
   createdAt: string;
 };
 
@@ -53,11 +68,4 @@ export type NotificationItem = {
   unread: boolean;
   dateGroup: string;
   createdAt: string;
-};
-
-export type AppStore = {
-  clients: Client[];
-  payments: Payment[];
-  team: TeamMember[];
-  notifications: NotificationItem[];
 };

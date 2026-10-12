@@ -1,8 +1,5 @@
-// app/reports/components/ClientsGrowthChart.tsx
 "use client";
 
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -13,24 +10,15 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const DATA = [
-  { month: "JAN", clients: 33 },
-  { month: "FEB", clients: 45 },
-  { month: "MAR", clients: 34 },
-  { month: "APR", clients: 46 },
-  { month: "MAY", clients: 35 },
-  { month: "JUN", clients: 47 },
-  { month: "JUL", clients: 37 },
-  { month: "AUG", clients: 52 },
-  { month: "SEP", clients: 30 },
-  { month: "OCT", clients: 44 },
-  { month: "NOV", clients: 38 },
-  { month: "DEC", clients: 50 },
-];
+type Point = { month: string; clients: number };
 
-function CustomDot(props: any) {
-  const { cx, cy, payload } = props;
-  if (payload.month !== "JUL") return null;
+function CustomDot(
+  props: { cx?: number; cy?: number; payload?: Point } & { highlight: string },
+) {
+  const { cx, cy, payload, highlight } = props;
+  if (!payload || payload.month !== highlight || cx == null || cy == null) {
+    return null;
+  }
 
   return (
     <g>
@@ -53,21 +41,30 @@ function CustomDot(props: any) {
   );
 }
 
-export default function ClientsGrowthChart() {
-  const [year, setYear] = useState("2026");
+export default function ClientsGrowthChart({
+  year,
+  data,
+}: {
+  year: string;
+  data: Point[];
+}) {
+  const highlight =
+    [...data].reverse().find((point) => point.clients > 0)?.month ||
+    data[data.length - 1]?.month ||
+    "";
+  const max = Math.max(6, ...data.map((point) => point.clients), 1);
 
   return (
     <div className="bg-white rounded-xl border border-gray-100 p-5 flex-1">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-gray-900">Clients Growth</h3>
-        <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded-lg">
+        <span className="px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded-lg">
           {year}
-          <ChevronDown size={14} />
-        </button>
+        </span>
       </div>
 
       <ResponsiveContainer width="100%" height={280}>
-        <LineChart data={DATA} margin={{ top: 20, right: 10, bottom: 0, left: -20 }}>
+        <LineChart data={data} margin={{ top: 20, right: 10, bottom: 0, left: -20 }}>
           <CartesianGrid vertical={false} stroke="#F3F4F6" />
           <XAxis
             dataKey="month"
@@ -79,8 +76,7 @@ export default function ClientsGrowthChart() {
             axisLine={false}
             tickLine={false}
             tick={{ fill: "#9CA3AF", fontSize: 11 }}
-            domain={[0, 60]}
-            ticks={[0, 10, 20, 30, 40, 50, 60]}
+            domain={[0, max]}
           />
           <Tooltip
             contentStyle={{
@@ -94,7 +90,7 @@ export default function ClientsGrowthChart() {
             dataKey="clients"
             stroke="#2E2A5C"
             strokeWidth={2}
-            dot={<CustomDot />}
+            dot={<CustomDot highlight={highlight} />}
             activeDot={{ r: 4 }}
           />
         </LineChart>

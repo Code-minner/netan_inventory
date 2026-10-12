@@ -4,6 +4,8 @@ import { FormEvent, useState } from "react";
 import Modal from "@/src/components/Modal";
 import { apiFetch } from "@/src/lib/api";
 import type { TeamMember } from "@/src/lib/types";
+import { STAFF_ROLE_OPTIONS } from "@/src/lib/roles";
+import { useAuth } from "@/src/components/AuthProvider";
 
 type Props = {
   isOpen: boolean;
@@ -18,10 +20,12 @@ export default function InviteMemberModal({
 }: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const { admin } = useAuth();
   const [role, setRole] = useState("Admin");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [inviteUrl, setInviteUrl] = useState("");
 
   const reset = () => {
     setName("");
@@ -29,6 +33,7 @@ export default function InviteMemberModal({
     setRole("Admin");
     setError("");
     setSuccess("");
+    setInviteUrl("");
   };
 
   const handleClose = () => {
@@ -47,6 +52,7 @@ export default function InviteMemberModal({
         member: TeamMember;
         emailSent: boolean;
         emailError?: string;
+        inviteUrl?: string;
       }>("/api/team", {
         method: "POST",
         body: JSON.stringify({
@@ -57,19 +63,15 @@ export default function InviteMemberModal({
       });
 
       onInvited?.(data.member);
+      setInviteUrl(data.inviteUrl || "");
 
       if (data.emailSent) {
         setSuccess("Invite sent successfully.");
       } else {
         setSuccess(
-          `Member added, but email failed${data.emailError ? `: ${data.emailError}` : "."}`,
+          `Member added, but email failed${data.emailError ? `: ${data.emailError}` : "."} Copy the invite link below.`,
         );
       }
-
-      setTimeout(() => {
-        reset();
-        onClose();
-      }, 900);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to send invite");
     } finally {
@@ -149,9 +151,13 @@ export default function InviteMemberModal({
             onChange={(e) => setRole(e.target.value)}
             className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none bg-white focus:border-[#2E2A5C]/40"
           >
-            <option>Admin</option>
-            <option>Editor</option>
-            <option>Viewer</option>
+            {STAFF_ROLE_OPTIONS.filter((option) =>
+              admin?.role === "Superadmin" ? true : option.value !== "Superadmin",
+            ).map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -164,6 +170,9 @@ export default function InviteMemberModal({
           <p className="text-sm text-green-600 bg-green-50 rounded-xl px-3 py-2.5">
             {success}
           </p>
+        ) : null}
+        {inviteUrl ? (
+          <p className="text-sm text-[#2E2A5C] break-all">{inviteUrl}</p>
         ) : null}
       </form>
     </Modal>

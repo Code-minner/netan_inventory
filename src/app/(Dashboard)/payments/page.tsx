@@ -4,8 +4,10 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import PaymentsTable from "./components/PaymentsTable";
 import NewPaymentModal from "./components/NewPaymentModal";
+import { useAuth } from "@/src/components/AuthProvider";
 
 export default function PaymentsPage() {
+  const { canWrite } = useAuth();
   const [newPaymentOpen, setNewPaymentOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -19,14 +21,16 @@ export default function PaymentsPage() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setNewPaymentOpen(true)}
-          className="flex items-center justify-center gap-2 bg-[#2E2A5C] text-white px-5 py-3 rounded-xl text-sm font-medium hover:bg-[#25214a] shrink-0"
-        >
-          <Plus size={16} />
-          New Payment
-        </button>
+        {canWrite ? (
+          <button
+            type="button"
+            onClick={() => setNewPaymentOpen(true)}
+            className="flex items-center justify-center gap-2 bg-[#2E2A5C] text-white px-5 py-3 rounded-xl text-sm font-medium hover:bg-[#25214a] shrink-0"
+          >
+            <Plus size={16} />
+            New Payment
+          </button>
+        ) : null}
       </div>
 
       <PaymentsTable refreshKey={refreshKey} />

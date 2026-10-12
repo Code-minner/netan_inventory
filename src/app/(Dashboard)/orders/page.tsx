@@ -1,11 +1,5 @@
-import OrdersTable from "./components/OrdersTable";
+import { redirect } from "next/navigation";
 
 export default function OrdersPage() {
-  return (
-    <div>
-      <div className="mt-8">
-        <OrdersTable />
-      </div>
-    </div>
-  );
+  redirect("/home");
 }

@@ -1,11 +1,5 @@
-import ProductsTable from "./components/ProductsTable";
+import { redirect } from "next/navigation";
 
 export default function ProductsPage() {
-  return (
-    <div>
-      <div className="mt-8">
-        <ProductsTable />
-      </div>
-    </div>
-  );
+  redirect("/home");
 }

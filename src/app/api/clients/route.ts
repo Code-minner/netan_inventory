@@ -1,26 +1,31 @@
 import { NextResponse } from "next/server";
-import {
-  clientFormEmailHtml,
-  sendEmail,
-} from "@/src/lib/mail";
+import { clientFormEmailHtml, sendEmail } from "@/src/lib/mail";
+import { handleRouteError, requireAdmin, requireWriter } from "@/src/lib/auth";
 import {
   createId,
   createToken,
   formatDisplayDate,
   formatNotificationTime,
+  insertClient,
+  insertNotification,
+  listClients,
   makeInitials,
-  readStore,
-  writeStore,
 } from "@/src/lib/store";
 import type { Client } from "@/src/lib/types";
 
 export async function GET() {
-  const store = await readStore();
-  return NextResponse.json({ clients: store.clients });
+  try {
+    await requireAdmin();
+    const clients = await listClients();
+    return NextResponse.json({ clients });
+  } catch (err) {
+    return handleRouteError(err);
+  }
 }
 
 export async function POST(request: Request) {
   try {
+    await requireWriter();
     const body = await request.json();
     const name = String(body.name || "").trim();
     const email = String(body.email || "").trim().toLowerCase();
@@ -38,7 +43,6 @@ export async function POST(request: Request) {
       );
     }
 
-    const store = await readStore();
     const now = new Date();
     const formToken = createToken();
     const client: Client = {
@@ -57,10 +61,10 @@ export async function POST(request: Request) {
       updatedAt: now.toISOString(),
     };
 
-    store.clients.unshift(client);
+    const saved = await insertClient(client);
 
     const stamp = formatNotificationTime(now);
-    store.notifications.unshift({
+    await insertNotification({
       id: createId(),
       text: `A new client, ${name}, was added.`,
       time: stamp.time,
@@ -68,8 +72,6 @@ export async function POST(request: Request) {
       dateGroup: stamp.dateGroup,
       createdAt: now.toISOString(),
     });
-
-    await writeStore(store);
 
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
     const formUrl = `${frontendUrl}/client-form/${formToken}`;
@@ -89,15 +91,12 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({
-      client,
+      client: saved,
       formUrl,
       emailSent,
       emailError,
     });
   } catch (err) {
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Failed to create client" },
-      { status: 500 },
-    );
+    return handleRouteError(err);
   }
 }

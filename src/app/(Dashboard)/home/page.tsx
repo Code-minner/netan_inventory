@@ -1,11 +1,15 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import StatsCards from "./components/StatsCards";
 import RecentActivities from "./components/RecentActivities";
 import RecentClients from "./components/RecentClients";
 import ServiceOverview from "./components/ServiceOverview";
 import RecentPayments from "./components/RecentPayments";
-import { CURRENT_ADMIN } from "@/src/lib/mock-data";
+import { useAuth } from "@/src/components/AuthProvider";
+import { apiFetch } from "@/src/lib/api";
+import type { Client, NotificationItem, Payment } from "@/src/lib/types";
 
 function greetingForHour(hour: number) {
   if (hour < 12) return "Good morning";
@@ -13,11 +17,33 @@ function greetingForHour(hour: number) {
   return "Good evening";
 }
 
+type DashboardData = {
+  stats: {
+    totalClients: number;
+    totalServices: number;
+    activeProjects: number;
+    totalPayments: number;
+  };
+  recentClients: Client[];
+  recentPayments: Payment[];
+  recentActivities: NotificationItem[];
+  services: { title: string; count: number }[];
+};
+
 export default function HomePage() {
+  const { admin } = useAuth();
+  const [data, setData] = useState<DashboardData | null>(null);
   const firstName =
-    CURRENT_ADMIN.name?.trim().split(/\s+/)[0] ||
-    CURRENT_ADMIN.email.split("@")[0];
+    admin?.name?.trim().split(/\s+/)[0] ||
+    admin?.email.split("@")[0] ||
+    "there";
   const greeting = greetingForHour(new Date().getHours());
+
+  useEffect(() => {
+    apiFetch<DashboardData>("/api/dashboard")
+      .then(setData)
+      .catch(() => setData(null));
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -30,18 +56,30 @@ export default function HomePage() {
         </p>
       </div>
 
-      <StatsCards />
+      <StatsCards stats={data?.stats} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="flex flex-col gap-6">
-          <RecentActivities />
-          <ServiceOverview />
+          <RecentActivities items={data?.recentActivities || []} />
+          <ServiceOverview services={data?.services || []} />
         </div>
         <div className="flex flex-col gap-6">
-          <RecentClients />
-          <RecentPayments />
+          <RecentClients clients={data?.recentClients || []} />
+          <RecentPayments payments={data?.recentPayments || []} />
         </div>
       </div>
+
+      <p className="text-xs text-gray-400">
+        Need the full lists?{" "}
+        <Link href="/clients" className="text-[#2D266C] font-medium hover:underline">
+          Clients
+        </Link>{" "}
+        and{" "}
+        <Link href="/payments" className="text-[#2D266C] font-medium hover:underline">
+          Payments
+        </Link>
+        .
+      </p>
     </div>
   );
 }

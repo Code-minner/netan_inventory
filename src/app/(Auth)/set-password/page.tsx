@@ -1,23 +1,47 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { EyesIcon, EyeSlashIcon } from "@/public/svg/svg";
+import { apiFetch } from "@/src/lib/api";
 
 export default function SetPasswordPage() {
+  return (
+    <Suspense fallback={<div className="h-40" />}>
+      <SetPasswordForm />
+    </Suspense>
+  );
+}
+
+function SetPasswordForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token") || "";
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
-    router.push("/success");
+    setLoading(true);
+    setError("");
+    try {
+      await apiFetch("/api/auth/reset", {
+        method: "POST",
+        body: JSON.stringify({ token, password }),
+      });
+      router.push("/success");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not save password");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -74,9 +98,10 @@ export default function SetPasswordPage() {
 
         <button
           type="submit"
-          className="w-full bg-[#2D266C] hover:bg-green-800 text-white font-medium py-3.5 rounded-lg transition-colors"
+          disabled={loading || !token}
+          className="w-full bg-[#2D266C] hover:bg-green-800 text-white font-medium py-3.5 rounded-lg transition-colors disabled:opacity-60"
         >
-          Save password
+          {loading ? "Saving…" : "Save password"}
         </button>
       </form>
     </div>

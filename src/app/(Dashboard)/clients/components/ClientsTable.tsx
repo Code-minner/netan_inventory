@@ -42,14 +42,17 @@ export default function ClientsTable({ refreshKey = 0 }: Props) {
   const [search, setSearch] = useState("");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [error, setError] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
+    setError("");
     try {
       const data = await apiFetch<{ clients: Client[] }>("/api/clients");
       setClients(data.clients);
-    } catch {
+    } catch (err) {
       setClients([]);
+      setError(err instanceof Error ? err.message : "Failed to load clients");
     } finally {
       setLoading(false);
     }
@@ -137,6 +140,10 @@ export default function ClientsTable({ refreshKey = 0 }: Props) {
         {loading ? (
           <div className="text-center text-sm text-gray-400 py-12">
             Loading clients…
+          </div>
+        ) : error ? (
+          <div className="text-center text-sm text-red-500 py-12 px-4">
+            {error}
           </div>
         ) : visibleClients.length === 0 ? (
           <div className="text-center text-sm text-gray-400 py-12">

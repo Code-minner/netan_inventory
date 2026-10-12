@@ -1,20 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { EyesIcon, EyeSlashIcon } from "@/public/svg/svg";
+import { apiFetch } from "@/src/lib/api";
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="h-40" />}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [staySignedIn, setStaySignedIn] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    router.push("/home");
+    setLoading(true);
+    setError("");
+    try {
+      await apiFetch("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password, staySignedIn }),
+      });
+      const next = searchParams.get("next") || "/home";
+      router.replace(next.startsWith("/") ? next : "/home");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not sign in");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -88,15 +114,25 @@ export default function LoginPage() {
           </label>
         </div>
 
+        {error ? (
+          <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+            {error}
+          </p>
+        ) : null}
+
         <button
           type="submit"
-          className="w-full bg-[#2D266C] hover:bg-green-800 text-white font-medium py-3.5 rounded-lg transition-colors"
+          disabled={loading}
+          className="w-full bg-[#2D266C] hover:bg-green-800 text-white font-medium py-3.5 rounded-lg transition-colors disabled:opacity-60"
         >
-          Sign in
+          {loading ? "Signing in…" : "Sign in"}
         </button>
 
         <p className="text-xs text-gray-500 text-center">
-          Access is limited to Netan Technologies staff.
+          Access is limited to Netan Technologies staff.{" "}
+          <Link href="/register" className="text-[#2D266C] font-medium hover:underline">
+            Create first admin
+          </Link>
         </p>
       </form>
     </div>
