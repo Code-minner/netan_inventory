@@ -1,10 +1,11 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { EyesIcon, EyeSlashIcon } from "@/public/svg/svg";
 import { apiFetch } from "@/src/lib/api";
+import { captureRecoveryHash } from "@/src/lib/recovery";
 
 export default function LoginPage() {
   return (
@@ -23,6 +24,12 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (captureRecoveryHash()) {
+      router.replace("/set-password?recovery=1");
+    }
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,9 +1,13 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { EyesIcon, EyeSlashIcon } from "@/public/svg/svg";
 import { apiFetch } from "@/src/lib/api";
+import {
+  RECOVERY_STORAGE_KEY,
+  captureRecoveryHash,
+} from "@/src/lib/recovery";
 
 export default function SetPasswordPage() {
   return (
@@ -17,11 +21,20 @@ function SetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
+  const recovery = searchParams.get("recovery") === "1";
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [hasRecovery, setHasRecovery] = useState(false);
+
+  useEffect(() => {
+    captureRecoveryHash();
+    setHasRecovery(Boolean(sessionStorage.getItem(RECOVERY_STORAGE_KEY)));
+  }, []);
+
+  const canSave = Boolean(token || recovery || hasRecovery);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,10 +45,19 @@ function SetPasswordForm() {
     setLoading(true);
     setError("");
     try {
-      await apiFetch("/api/auth/reset", {
-        method: "POST",
-        body: JSON.stringify({ token, password }),
-      });
+      const accessToken = sessionStorage.getItem(RECOVERY_STORAGE_KEY) || "";
+      if (accessToken) {
+        await apiFetch("/api/auth/recover-complete", {
+          method: "POST",
+          body: JSON.stringify({ password, accessToken }),
+        });
+        sessionStorage.removeItem(RECOVERY_STORAGE_KEY);
+      } else {
+        await apiFetch("/api/auth/reset", {
+          method: "POST",
+          body: JSON.stringify({ token, password }),
+        });
+      }
       router.push("/success");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save password");
@@ -98,7 +120,7 @@ function SetPasswordForm() {
 
         <button
           type="submit"
-          disabled={loading || !token}
+          disabled={loading || !canSave}
           className="w-full bg-[#2D266C] hover:bg-green-800 text-white font-medium py-3.5 rounded-lg transition-colors disabled:opacity-60"
         >
           {loading ? "Saving…" : "Save password"}

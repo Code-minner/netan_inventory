@@ -318,7 +318,7 @@ export async function listTeam() {
 
 export async function findTeamByEmail(email: string) {
   const rows = await supabaseRest<TeamRow[]>(
-    `/team?email=eq.${encodeURIComponent(email)}&select=*`,
+    `/team?email=ilike.${encodeURIComponent(email)}&select=*`,
   );
   return rows[0] ? mapTeam(rows[0]) : null;
 }
