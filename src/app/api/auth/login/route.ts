@@ -20,15 +20,30 @@ export async function POST(request: Request) {
     }
 
     const member = await findTeamByEmail(email);
-    if (!member || member.status !== "Active" || !member.authUserId) {
-      throw new AuthError(401, "Invalid email or password.");
+    if (!member) {
+      throw new AuthError(
+        401,
+        "This email is not in the team table. Run the admin insert SQL on this Supabase project.",
+      );
+    }
+    if (member.status !== "Active") {
+      throw new AuthError(401, "This staff account is not active.");
+    }
+    if (!member.authUserId) {
+      throw new AuthError(
+        401,
+        "This team row is not linked to Authentication. Re-run the insert that copies auth.users.id into team.auth_user_id.",
+      );
     }
 
     let tokens;
     try {
       tokens = await signInWithPassword(email, password);
     } catch {
-      throw new AuthError(401, "Invalid email or password.");
+      throw new AuthError(
+        401,
+        "Wrong password for this Auth user. Use the password you set in Authentication → Users, or reset it there.",
+      );
     }
 
     await setAuthCookies(tokens, persist);
