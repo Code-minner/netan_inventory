@@ -46,30 +46,30 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="space-y-8">
-      <div className="space-y-2">
+    <div className="space-y-10">
+      <div className="space-y-3">
         <h1 className="text-2xl font-bold text-gray-900">
           Welcome back, {firstName}!
         </h1>
-        <p className="text-gray-500 leading-relaxed">
+        <p className="text-gray-500 leading-relaxed max-w-2xl">
           {greeting}. Here&apos;s a quick summary of how Netan is performing.
         </p>
       </div>
 
       <StatsCards stats={data?.stats} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="flex flex-col gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="flex flex-col gap-8">
           <RecentActivities items={data?.recentActivities || []} />
           <ServiceOverview services={data?.services || []} />
         </div>
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-8">
           <RecentClients clients={data?.recentClients || []} />
           <RecentPayments payments={data?.recentPayments || []} />
         </div>
       </div>
 
-      <p className="text-xs text-gray-400">
+      <p className="text-xs text-gray-400 pt-2">
         Need the full lists?{" "}
         <Link href="/clients" className="text-[#2D266C] font-medium hover:underline">
           Clients

@@ -79,7 +79,7 @@ function RegisterForm() {
 
   if (mode === "loading") {
     return (
-      <div className="w-full max-w-[400px] bg-white rounded-lg shadow-md px-6 sm:px-8 py-16 text-center text-sm text-gray-500">
+      <div className="w-full max-w-[420px] bg-white rounded-2xl shadow-sm border border-gray-100 px-7 sm:px-10 py-14 sm:py-16 text-center text-sm text-gray-500">
         Checking invite…
       </div>
     );
@@ -87,7 +87,7 @@ function RegisterForm() {
 
   if (mode === "closed" || mode === "invalid") {
     return (
-      <div className="w-full max-w-[400px] bg-white rounded-lg shadow-md px-6 sm:px-8 py-16">
+      <div className="w-full max-w-[420px] bg-white rounded-2xl shadow-sm border border-gray-100 px-7 sm:px-10 py-14 sm:py-16">
         <h1 className="text-2xl font-semibold text-gray-900 text-center">
           Invite required
         </h1>
@@ -105,8 +105,8 @@ function RegisterForm() {
   }
 
   return (
-    <div className="w-full max-w-[400px] bg-white rounded-lg shadow-md px-6 sm:px-8 py-16">
-      <div className="mb-8 text-center">
+    <div className="w-full max-w-[420px] bg-white rounded-2xl shadow-sm border border-gray-100 px-7 sm:px-10 py-14 sm:py-16">
+      <div className="mb-10 text-center space-y-3">
         <h1 className="text-2xl font-semibold text-gray-900">
           {mode === "first" ? "Create admin account" : "Accept invite"}
         </h1>
@@ -117,7 +117,7 @@ function RegisterForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1.5">
             Full name

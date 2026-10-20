@@ -89,7 +89,6 @@ export async function POST(request: Request, { params }: Params) {
 
     const now = new Date();
     const client = await updateClient(current.id, {
-      name: company || current.name,
       company,
       serviceType,
       duration,

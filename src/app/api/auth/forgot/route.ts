@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { resetPasswordEmailHtml, sendEmail } from "@/src/lib/mail";
+import { getAppUrl } from "@/src/lib/app-url";
 import { AuthError, handleRouteError } from "@/src/lib/auth";
 import {
   createId,
@@ -22,8 +23,7 @@ export async function POST(request: Request) {
         resetExpiresAt: expires,
       });
 
-      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
-      const resetUrl = `${frontendUrl}/set-password?token=${resetToken}`;
+      const resetUrl = `${getAppUrl(request)}/set-password?token=${resetToken}`;
       try {
         await sendEmail({
           to: member.email,

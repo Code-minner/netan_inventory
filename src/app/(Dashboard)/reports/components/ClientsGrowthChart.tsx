@@ -55,7 +55,7 @@ export default function ClientsGrowthChart({
   const max = Math.max(6, ...data.map((point) => point.clients), 1);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-5 flex-1">
+    <div className="bg-white rounded-2xl border border-gray-100 p-7 sm:p-8 flex-1">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-gray-900">Clients Growth</h3>
         <span className="px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded-lg">

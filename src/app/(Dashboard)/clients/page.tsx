@@ -12,9 +12,9 @@ export default function ClientsPage() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-        <div className="space-y-2">
+    <div className="space-y-10">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
+        <div className="space-y-3">
           <h1 className="text-[22px] font-semibold text-gray-900">Clients</h1>
           <p className="text-sm text-gray-500 max-w-xl leading-relaxed">
             Manage your clients, view their details, and track their projects and

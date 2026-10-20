@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { clientFormEmailHtml, sendEmail } from "@/src/lib/mail";
+import { getAppUrl } from "@/src/lib/app-url";
 import { handleRouteError, requireAdmin, requireWriter } from "@/src/lib/auth";
 import {
   createId,
@@ -73,8 +74,7 @@ export async function POST(request: Request) {
       createdAt: now.toISOString(),
     });
 
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
-    const formUrl = `${frontendUrl}/client-form/${formToken}`;
+    const formUrl = `${getAppUrl(request)}/client-form/${formToken}`;
 
     let emailSent = true;
     let emailError: string | undefined;

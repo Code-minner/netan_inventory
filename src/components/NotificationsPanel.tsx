@@ -8,9 +8,14 @@ import type { NotificationItem } from "@/src/lib/types";
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  onUnreadChange?: (count: number) => void;
 };
 
-export default function NotificationsPanel({ isOpen, onClose }: Props) {
+export default function NotificationsPanel({
+  isOpen,
+  onClose,
+  onUnreadChange,
+}: Props) {
   const [tab, setTab] = useState<"all" | "unread">("all");
   const [items, setItems] = useState<NotificationItem[]>([]);
   const [visible, setVisible] = useState(false);
@@ -23,12 +28,14 @@ export default function NotificationsPanel({ isOpen, onClose }: Props) {
         "/api/notifications",
       );
       setItems(data.notifications);
+      onUnreadChange?.(data.notifications.filter((n) => n.unread).length);
     } catch {
       setItems([]);
+      onUnreadChange?.(0);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [onUnreadChange]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -78,8 +85,10 @@ export default function NotificationsPanel({ isOpen, onClose }: Props) {
         },
       );
       setItems(data.notifications);
+      onUnreadChange?.(0);
     } catch {
       setItems((prev) => prev.map((n) => ({ ...n, unread: false })));
+      onUnreadChange?.(0);
     }
   };
 

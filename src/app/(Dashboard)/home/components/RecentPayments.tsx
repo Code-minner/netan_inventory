@@ -5,25 +5,25 @@ import type { Payment } from "@/src/lib/types";
 
 export default function RecentPayments({ payments }: { payments: Payment[] }) {
   return (
-    <div className="bg-white p-6 rounded-xl border border-gray-100 w-full">
-      <div className="flex items-center justify-between mb-6">
+    <div className="bg-white p-7 sm:p-8 rounded-2xl border border-gray-100 w-full">
+      <div className="flex items-center justify-between mb-8">
         <h2 className="text-lg font-medium text-gray-900">Recent payments</h2>
         <Link
           href="/payments"
-          className="text-sm font-medium text-gray-600 border border-gray-200 rounded-lg px-4 py-1.5 hover:bg-gray-50 transition-colors"
+          className="text-sm font-medium text-gray-600 border border-gray-200 rounded-lg px-4 py-2 hover:bg-gray-50 transition-colors"
         >
           See more
         </Link>
       </div>
 
       {payments.length === 0 ? (
-        <p className="text-sm text-gray-400 py-6 text-center">No payments yet.</p>
+        <p className="text-sm text-gray-400 py-10 text-center">No payments yet.</p>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-5">
           {payments.map((payment) => (
             <div
               key={payment.id}
-              className="grid grid-cols-[2fr_1.5fr_1fr] items-center gap-4"
+              className="grid grid-cols-[2fr_1.5fr_1fr] items-center gap-4 py-1"
             >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium flex-shrink-0 bg-orange-50 text-orange-400">

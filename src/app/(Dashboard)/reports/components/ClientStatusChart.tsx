@@ -28,7 +28,7 @@ export default function ClientStatusChart({
   ];
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-7 w-full h-full">
+    <div className="bg-white rounded-2xl border border-gray-100 p-7 sm:p-8 w-full h-full">
       <h3 className="text-sm font-semibold text-gray-900 mb-6">Client Status</h3>
 
       <div className="flex items-center gap-10">

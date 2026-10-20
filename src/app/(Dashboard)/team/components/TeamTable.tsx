@@ -58,8 +58,8 @@ export default function TeamTable() {
   }, [members, search]);
 
   return (
-    <div className="bg-white rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-gray-100 p-6 sm:p-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6">
+    <div className="bg-white rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-gray-100 p-7 sm:p-10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-8">
         <h2 className="text-base font-semibold text-gray-900">Team Member</h2>
         {canWrite ? (
           <button
@@ -73,7 +73,7 @@ export default function TeamTable() {
         ) : null}
       </div>
 
-      <div className="relative w-full sm:w-72 pb-6">
+      <div className="relative w-full sm:w-72 pb-8">
         <Search
           className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
           size={16}
@@ -95,20 +95,20 @@ export default function TeamTable() {
         <div className="w-[4%]" />
       </div>
 
-      <div className="flex flex-col gap-3.5">
+      <div className="flex flex-col gap-4">
         {loading ? (
-          <div className="text-center text-sm text-gray-400 py-12">
+          <div className="text-center text-sm text-gray-400 py-16">
             Loading team…
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center text-sm text-gray-400 py-12">
+          <div className="text-center text-sm text-gray-400 py-16">
             No team members found.
           </div>
         ) : (
           filtered.map((member) => (
             <div
               key={member.id}
-              className="flex items-center border border-gray-100 rounded-2xl px-4 py-4 hover:border-gray-200 transition-colors"
+              className="flex items-center border border-gray-100 rounded-2xl px-5 py-5 hover:border-gray-200 transition-colors"
             >
               <div className="w-[28%] flex items-center gap-3 min-w-0">
                 <span className="w-10 h-10 shrink-0 rounded-full bg-orange-50 text-orange-400 flex items-center justify-center text-xs font-semibold">

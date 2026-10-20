@@ -48,7 +48,7 @@ export default function Modal({
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#2E2A5C]/45 backdrop-blur-[1px] transition-opacity duration-200 ${
+      className={`fixed inset-0 z-50 flex items-center justify-center p-5 sm:p-8 bg-[#2E2A5C]/45 backdrop-blur-[1px] transition-opacity duration-200 ${
         visible ? "opacity-100" : "opacity-0"
       }`}
       onClick={onClose}
@@ -59,7 +59,7 @@ export default function Modal({
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-6 sm:px-7 py-5 border-b border-gray-100 shrink-0">
+        <div className="flex items-center justify-between px-7 sm:px-8 py-6 border-b border-gray-100 shrink-0">
           <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
           <button
             type="button"
@@ -70,9 +70,9 @@ export default function Modal({
             <X size={18} />
           </button>
         </div>
-        <div className="px-6 sm:px-7 py-6 overflow-y-auto">{children}</div>
+        <div className="px-7 sm:px-8 py-7 overflow-y-auto">{children}</div>
         {footer ? (
-          <div className="px-6 sm:px-7 py-5 border-t border-gray-100 flex items-center justify-end gap-3 shrink-0">
+          <div className="px-7 sm:px-8 py-6 border-t border-gray-100 flex items-center justify-end gap-3 shrink-0">
             {footer}
           </div>
         ) : null}

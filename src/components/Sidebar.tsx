@@ -51,7 +51,7 @@ export default function Sidebar() {
           lg:translate-x-0
         `}
       >
-        <div className="p-6 flex items-center justify-between">
+        <div className="px-6 pt-7 pb-5 flex items-center justify-between">
           <Image
             src="/assets/logo.png"
             alt="Netan Logo"
@@ -64,7 +64,7 @@ export default function Sidebar() {
           </button>
         </div>
 
-        <nav className="flex-1 p-4 space-y-1">
+        <nav className="flex-1 px-4 py-2 space-y-1.5">
           {navItems.map((item) => {
             const isActive =
               pathname === item.href || pathname.startsWith(`${item.href}/`);

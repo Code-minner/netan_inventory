@@ -24,9 +24,24 @@ function isPublicPath(pathname: string) {
   );
 }
 
+const LEGACY_PREFIXES = [
+  "/orders",
+  "/products",
+  "/messages",
+  "/users",
+];
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   if (pathname.startsWith("/api/")) return NextResponse.next();
+
+  if (
+    LEGACY_PREFIXES.some(
+      (path) => pathname === path || pathname.startsWith(`${path}/`),
+    )
+  ) {
+    return NextResponse.redirect(new URL("/home", request.url));
+  }
 
   const hasSession =
     Boolean(request.cookies.get("netan_access_token")?.value) ||

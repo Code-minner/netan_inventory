@@ -8,15 +8,15 @@ export default function RecentActivities({
   items: NotificationItem[];
 }) {
   return (
-    <div className="bg-white p-6 rounded-xl border border-gray-100 w-full">
-      <h2 className="text-lg font-medium text-gray-900 mb-6">Recent Activities</h2>
+    <div className="bg-white p-7 sm:p-8 rounded-2xl border border-gray-100 w-full">
+      <h2 className="text-lg font-medium text-gray-900 mb-8">Recent Activities</h2>
 
       {items.length === 0 ? (
-        <p className="text-sm text-gray-400 py-6 text-center">
+        <p className="text-sm text-gray-400 py-10 text-center">
           No activity yet.
         </p>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-7">
           {items.map((activity) => (
             <div key={activity.id} className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">

@@ -30,9 +30,9 @@ export default function ReportsPage() {
   }, []);
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-        <div className="space-y-2">
+    <div className="space-y-10">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
+        <div className="space-y-3">
           <h1 className="text-[22px] font-semibold text-gray-900">Reports</h1>
           <p className="text-sm text-gray-500 max-w-xl leading-relaxed">
             View and analyze your client and payment records.
@@ -50,7 +50,7 @@ export default function ReportsPage() {
 
       <ReportStatCards stats={data?.stats} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-[65%_35%] gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-[65%_35%] gap-6 sm:gap-8">
         <ClientsGrowthChart
           year={String(data?.year || new Date().getFullYear())}
           data={data?.growth || []}

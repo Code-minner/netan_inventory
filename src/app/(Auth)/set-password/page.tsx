@@ -67,7 +67,7 @@ function SetPasswordForm() {
   };
 
   return (
-    <div className="w-full max-w-[400px] bg-white rounded-lg shadow-md px-6 sm:px-8 py-16  ">
+    <div className="w-full max-w-[420px] bg-white rounded-2xl shadow-sm border border-gray-100 px-7 sm:px-10 py-14 sm:py-16  ">
       <div className="mb-8 text-center">
         <h1 className="text-2xl font-semibold text-gray-900">Set a new password</h1>
         <p className="text-sm text-gray-500 mt-2">

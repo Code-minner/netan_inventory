@@ -9,9 +9,9 @@ interface ReportStat {
 
 function StatCard({ title, value, change, isPositive }: ReportStat) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 px-5 py-4 flex-1">
-      <p className="text-sm text-gray-400 mb-2">{title}</p>
-      <p className="text-2xl font-semibold text-gray-900 mb-2">{value}</p>
+    <div className="bg-white rounded-2xl border border-gray-100 px-6 py-6 flex-1">
+      <p className="text-sm text-gray-400 mb-3">{title}</p>
+      <p className="text-2xl font-semibold text-gray-900 mb-3">{value}</p>
       <div className="flex items-center gap-1 text-xs">
         <span className={isPositive ? "text-green-600" : "text-red-500"}>
           {change}
@@ -62,7 +62,7 @@ export default function ReportStatCards({ stats }: Props) {
   ];
 
   return (
-    <div className="flex gap-4 flex-wrap">
+    <div className="flex gap-5 sm:gap-6 flex-wrap">
       {cards.map((stat) => (
         <StatCard key={stat.title} {...stat} />
       ))}

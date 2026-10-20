@@ -9,8 +9,8 @@ interface StatCardProps {
 
 function StatCard({ title, value }: StatCardProps) {
   return (
-    <div className="bg-white p-5 rounded-xl border border-gray-100">
-      <p className="text-sm text-gray-400 mb-3">{title}</p>
+    <div className="bg-white p-6 sm:p-7 rounded-2xl border border-gray-100">
+      <p className="text-sm text-gray-400 mb-4">{title}</p>
       <p className="text-2xl font-semibold text-gray-900">{value}</p>
     </div>
   );
@@ -37,7 +37,7 @@ export default function StatsCards({ stats }: Props) {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
       {cards.map((stat) => (
         <StatCard key={stat.title} {...stat} />
       ))}

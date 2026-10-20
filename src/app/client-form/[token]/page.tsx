@@ -101,21 +101,21 @@ export default function ClientFormPage() {
   };
 
   return (
-    <div className="min-h-dvh bg-[#EAE9F0] px-4 py-10 sm:py-16">
+    <div className="min-h-dvh bg-[#EAE9F0] px-5 sm:px-8 py-12 sm:py-20">
       <div className="mx-auto w-full max-w-xl">
-        <div className="mb-8 text-center">
-          <p className="text-sm font-semibold tracking-wide text-[#2E2A5C] uppercase mb-2">
+        <div className="mb-10 text-center space-y-3">
+          <p className="text-sm font-semibold tracking-wide text-[#2E2A5C] uppercase">
             Netan
           </p>
           <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900">
             Project onboarding form
           </h1>
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="text-sm text-gray-500 leading-relaxed max-w-md mx-auto">
             Tell us about your company and the project we&apos;ll be working on.
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-7 sm:p-10">
           {loading ? (
             <p className="text-sm text-gray-500 text-center py-10">Loading…</p>
           ) : error && !client ? (
@@ -131,8 +131,8 @@ export default function ClientFormPage() {
               </p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <ReadOnly label="Email" value={client?.email || ""} />
                 <ReadOnly label="Phone" value={client?.phone || ""} />
               </div>
@@ -175,7 +175,7 @@ export default function ClientFormPage() {
                 placeholder="e.g. Website Development"
               />
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5">
                     Number of services

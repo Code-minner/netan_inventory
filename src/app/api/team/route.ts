@@ -6,6 +6,7 @@ import {
   requireAdmin,
   requireWriter,
 } from "@/src/lib/auth";
+import { getAppUrl } from "@/src/lib/app-url";
 import { canInviteRole, canManageTeam, isValidRole } from "@/src/lib/roles";
 import {
   createId,
@@ -103,8 +104,7 @@ export async function POST(request: Request) {
       createdAt: now.toISOString(),
     });
 
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
-    const inviteUrl = `${frontendUrl}/register?token=${encodeURIComponent(inviteToken)}`;
+    const inviteUrl = `${getAppUrl(request)}/register?token=${encodeURIComponent(inviteToken)}`;
 
     let emailSent = true;
     let emailError: string | undefined;

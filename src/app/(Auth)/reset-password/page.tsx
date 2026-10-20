@@ -30,15 +30,15 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="w-full max-w-[400px] bg-white rounded-lg shadow-md px-6 sm:px-8 py-16  ">
-      <div className="mb-8 text-center">
+    <div className="w-full max-w-[420px] bg-white rounded-2xl shadow-sm border border-gray-100 px-7 sm:px-10 py-14 sm:py-16  ">
+      <div className="mb-10 text-center space-y-3">
         <h1 className="text-2xl font-semibold text-gray-900">Reset your Password</h1>
         <p className="text-sm text-gray-500 mt-4">
           Enter your Netan staff email and we&apos;ll send a reset link.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1.5">
             Email
