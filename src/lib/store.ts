@@ -25,6 +25,13 @@ type ClientRow = {
   project_description: string | null;
   budget: string | null;
   goals: string | null;
+  selected_services?: Client["selectedServices"] | null;
+  timeline?: string | null;
+  project_document_url?: string | null;
+  about_project?: string | null;
+  payment_percent?: number | null;
+  payment_proof_url?: string | null;
+  order_total?: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -39,6 +46,8 @@ type PaymentRow = {
   paid_amount: string;
   paid_date: string;
   status: Payment["status"];
+  payment_percent?: number | null;
+  payment_proof_url?: string | null;
   created_at: string;
 };
 
@@ -147,6 +156,13 @@ function mapClient(row: ClientRow): Client {
     projectDescription: row.project_description || undefined,
     budget: row.budget || undefined,
     goals: row.goals || undefined,
+    selectedServices: row.selected_services || undefined,
+    timeline: row.timeline || undefined,
+    projectDocumentUrl: row.project_document_url || undefined,
+    aboutProject: row.about_project || undefined,
+    paymentPercent: row.payment_percent ?? undefined,
+    paymentProofUrl: row.payment_proof_url || undefined,
+    orderTotal: row.order_total || undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -163,6 +179,8 @@ function mapPayment(row: PaymentRow): Payment {
     paidAmount: row.paid_amount,
     paidDate: row.paid_date,
     status: row.status,
+    paymentPercent: row.payment_percent ?? undefined,
+    paymentProofUrl: row.payment_proof_url || undefined,
     createdAt: row.created_at,
   };
 }
@@ -272,6 +290,21 @@ export async function updateClient(id: string, patch: Partial<Client>) {
   }
   if (patch.budget !== undefined) body.budget = patch.budget;
   if (patch.goals !== undefined) body.goals = patch.goals;
+  if (patch.selectedServices !== undefined) {
+    body.selected_services = patch.selectedServices;
+  }
+  if (patch.timeline !== undefined) body.timeline = patch.timeline;
+  if (patch.projectDocumentUrl !== undefined) {
+    body.project_document_url = patch.projectDocumentUrl;
+  }
+  if (patch.aboutProject !== undefined) body.about_project = patch.aboutProject;
+  if (patch.paymentPercent !== undefined) {
+    body.payment_percent = patch.paymentPercent;
+  }
+  if (patch.paymentProofUrl !== undefined) {
+    body.payment_proof_url = patch.paymentProofUrl;
+  }
+  if (patch.orderTotal !== undefined) body.order_total = patch.orderTotal;
 
   const rows = await supabaseRest<ClientRow[]>(
     `/clients?id=eq.${encodeURIComponent(id)}`,
@@ -300,6 +333,8 @@ export async function insertPayment(payment: Payment) {
       id: payment.id,
       client_id: payment.clientId ?? null,
       name: payment.name,
+      payment_percent: payment.paymentPercent ?? null,
+      payment_proof_url: payment.paymentProofUrl ?? null,
       initials: payment.initials,
       services_count: payment.servicesCount,
       amount: payment.amount,

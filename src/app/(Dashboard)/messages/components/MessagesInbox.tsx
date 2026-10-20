@@ -141,7 +141,7 @@ export default function MessagesInbox() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden grid grid-cols-1 lg:grid-cols-[300px_1fr] flex-1 min-h-0 min-w-0">
+      <div className="bg-white rounded-lg border border-gray-100 overflow-hidden grid grid-cols-1 lg:grid-cols-[300px_1fr] flex-1 min-h-0 min-w-0">
         <div
           className={`border-r border-gray-100 flex-col min-h-0 min-w-0 ${
             showThread ? "hidden lg:flex" : "flex"
@@ -273,7 +273,7 @@ export default function MessagesInbox() {
                         className={`flex ${inbound ? "justify-start" : "justify-end"}`}
                       >
                         <div
-                          className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-3.5 py-2 text-sm ${
+                          className={`max-w-[85%] sm:max-w-[75%] rounded-lg px-3.5 py-2 text-sm ${
                             inbound
                               ? "bg-white border border-gray-100 text-gray-800"
                               : "bg-[#2D266C] text-white"

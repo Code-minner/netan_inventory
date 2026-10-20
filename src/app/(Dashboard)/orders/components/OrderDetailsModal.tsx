@@ -168,7 +168,7 @@ export default function OrderDetailsModal({
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6 pt-0">
-          <div className="flex items-center gap-3 border border-gray-200 rounded-xl p-4">
+          <div className="flex items-center gap-3 border border-gray-200 rounded-lg p-4">
             <div className="w-10 h-10 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-[#1C5E32] flex-shrink-0">
               <ActiveIcon size={18} />
             </div>

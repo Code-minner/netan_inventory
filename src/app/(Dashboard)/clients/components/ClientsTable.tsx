@@ -79,7 +79,7 @@ function DropdownMenu({ open, onClose, children, align = "left" }: MenuProps) {
   return (
     <div
       ref={ref}
-      className={`absolute top-full mt-2 z-20 min-w-[180px] rounded-xl border border-gray-200 bg-white py-1.5 shadow-lg ${
+      className={`absolute top-full mt-2 z-20 min-w-[180px] rounded-lg border border-gray-200 bg-white py-1.5 shadow-lg ${
         align === "right" ? "right-0" : "left-0"
       }`}
     >
@@ -167,7 +167,7 @@ export default function ClientsTable({ refreshKey = 0 }: Props) {
     SORT_OPTIONS.find((s) => s.value === sortKey)?.label || "Sort by";
 
   return (
-    <div className="bg-white rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-gray-100 p-7 sm:p-10">
+    <div className="bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-gray-100 p-7 sm:p-10 min-h-[480px]">
       <div className="flex flex-wrap items-center gap-3 pb-8">
         <div className="relative w-full sm:w-64">
           <Search
@@ -181,7 +181,7 @@ export default function ClientsTable({ refreshKey = 0 }: Props) {
               setVisibleCount(PAGE_SIZE);
             }}
             placeholder="Search"
-            className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-600 placeholder:text-gray-400 border border-gray-200 rounded-xl outline-none focus:border-gray-300"
+            className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-600 placeholder:text-gray-400 border border-gray-200 rounded-lg outline-none focus:border-gray-300"
           />
         </div>
 
@@ -192,7 +192,7 @@ export default function ClientsTable({ refreshKey = 0 }: Props) {
               setFiltersOpen((o) => !o);
               setSortOpen(false);
             }}
-            className={`flex items-center gap-2 px-4 py-2.5 text-sm border rounded-xl hover:bg-gray-50 ${
+            className={`flex items-center gap-2 px-4 py-2.5 text-sm border rounded-lg hover:bg-gray-50 ${
               formFilter !== "All"
                 ? "border-[#2E2A5C] text-[#2E2A5C]"
                 : "border-gray-200 text-gray-500"
@@ -201,7 +201,10 @@ export default function ClientsTable({ refreshKey = 0 }: Props) {
             <SlidersHorizontal size={15} />
             {formFilter === "All" ? "Filters" : formFilterLabel}
           </button>
-          <DropdownMenu open={filtersOpen} onClose={() => setFiltersOpen(false)}>
+          <DropdownMenu
+            open={filtersOpen}
+            onClose={() => setFiltersOpen(false)}
+          >
             {FORM_FILTERS.map((option) => (
               <button
                 key={option.value}
@@ -229,7 +232,7 @@ export default function ClientsTable({ refreshKey = 0 }: Props) {
               setSortOpen((o) => !o);
               setFiltersOpen(false);
             }}
-            className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-500 border border-gray-200 rounded-xl hover:bg-gray-50"
+            className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50"
           >
             <ArrowUpDown size={15} />
             {sortKey === "newest" ? "Sort by" : sortLabel}
@@ -309,7 +312,7 @@ export default function ClientsTable({ refreshKey = 0 }: Props) {
           visibleClients.map((client) => (
             <div
               key={client.id}
-              className="flex flex-col lg:flex-row lg:items-center gap-3 border border-gray-100 rounded-2xl px-5 py-5 hover:border-gray-200 transition-colors"
+              className="flex flex-col lg:flex-row lg:items-center gap-3 border border-gray-100 rounded-lg px-5 py-5 hover:border-gray-200 transition-colors"
             >
               <div className="lg:w-[26%] flex items-center gap-3 min-w-0">
                 <span className="w-10 h-10 shrink-0 rounded-full bg-orange-50 text-orange-400 flex items-center justify-center text-xs font-semibold">
@@ -374,7 +377,7 @@ export default function ClientsTable({ refreshKey = 0 }: Props) {
         <div className="flex justify-center pt-10">
           <button
             onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-            className="px-5 py-2.5 text-sm font-medium text-gray-800 border border-gray-200 rounded-xl hover:bg-gray-50"
+            className="px-5 py-2.5 text-sm font-medium text-gray-800 border border-gray-200 rounded-lg hover:bg-gray-50"
           >
             See more
           </button>

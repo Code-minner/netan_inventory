@@ -28,14 +28,25 @@ export default function ClientStatusChart({
   ];
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-7 sm:p-8 w-full h-full">
-      <h3 className="text-sm font-semibold text-gray-900 mb-6">Client Status</h3>
+    <div className="bg-white rounded-lg border border-gray-100 p-7 sm:p-8 w-full h-full">
+      <h3 className="text-sm font-semibold text-gray-900 mb-6">
+        Client Status
+      </h3>
 
       <div className="flex items-center gap-10">
-        <div className="relative shrink-0" style={{ width: SIZE, height: SIZE }}>
-          <PieChart width={SIZE} height={SIZE} className="w-full h-full pr-2 pb-2">
+        <div
+          className="relative shrink-0"
+          style={{ width: SIZE, height: SIZE }}
+        >
+          <PieChart
+            width={SIZE}
+            height={SIZE}
+            className="w-full h-full pr-2 pb-2"
+          >
             <Pie
-              data={total ? data : [{ name: "Empty", value: 1, color: "#E5E7EB" }]}
+              data={
+                total ? data : [{ name: "Empty", value: 1, color: "#E5E7EB" }]
+              }
               dataKey="value"
               cx={SIZE / 2}
               cy={SIZE / 2}
@@ -47,9 +58,11 @@ export default function ClientStatusChart({
               stroke="none"
               isAnimationActive={false}
             >
-              {(total ? data : [{ name: "Empty", color: "#E5E7EB" }]).map((entry) => (
-                <Cell key={entry.name} fill={entry.color} />
-              ))}
+              {(total ? data : [{ name: "Empty", color: "#E5E7EB" }]).map(
+                (entry) => (
+                  <Cell key={entry.name} fill={entry.color} />
+                ),
+              )}
             </Pie>
           </PieChart>
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
@@ -66,7 +79,9 @@ export default function ClientStatusChart({
                 style={{ backgroundColor: entry.color }}
               />
               <span className="text-gray-700 w-16">{entry.name}</span>
-              <span className="font-semibold text-gray-900">{entry.percent}</span>
+              <span className="font-semibold text-gray-900">
+                {entry.percent}
+              </span>
               <span className="text-gray-400">({entry.value})</span>
             </div>
           ))}

@@ -93,7 +93,7 @@ export default function NewClientModal({ isOpen, onClose, onCreated }: Props) {
             type="button"
             onClick={handleClose}
             disabled={loading}
-            className="px-5 py-2.5 text-sm text-gray-600 border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-50"
+            className="px-5 py-2.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50"
           >
             Cancel
           </button>
@@ -101,7 +101,7 @@ export default function NewClientModal({ isOpen, onClose, onCreated }: Props) {
             type="submit"
             form="new-client-form"
             disabled={loading || Boolean(formUrl)}
-            className="px-5 py-2.5 text-sm font-medium text-white bg-[#2E2A5C] rounded-xl hover:bg-[#25214a] disabled:opacity-60"
+            className="px-5 py-2.5 text-sm font-medium text-white bg-[#2E2A5C] rounded-lg hover:bg-[#25214a] disabled:opacity-60"
           >
             {loading ? "Adding…" : formUrl ? "Added" : "Add Client"}
           </button>
@@ -122,7 +122,7 @@ export default function NewClientModal({ isOpen, onClose, onCreated }: Props) {
             onChange={(e) => setName(e.target.value)}
             required
             placeholder="e.g. Tolu & Kene Studio"
-            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none focus:border-[#2E2A5C]/40"
+            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#2E2A5C]/40"
           />
         </div>
 
@@ -136,7 +136,7 @@ export default function NewClientModal({ isOpen, onClose, onCreated }: Props) {
             onChange={(e) => setEmail(e.target.value)}
             required
             placeholder="client@company.com"
-            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none focus:border-[#2E2A5C]/40"
+            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#2E2A5C]/40"
           />
         </div>
 
@@ -149,7 +149,7 @@ export default function NewClientModal({ isOpen, onClose, onCreated }: Props) {
             onChange={(e) => setPhone(e.target.value)}
             required
             placeholder="+234 800 000 0000"
-            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none focus:border-[#2E2A5C]/40"
+            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#2E2A5C]/40"
           />
         </div>
 
@@ -163,7 +163,7 @@ export default function NewClientModal({ isOpen, onClose, onCreated }: Props) {
               min={1}
               value={servicesCount}
               onChange={(e) => setServicesCount(e.target.value)}
-              className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none focus:border-[#2E2A5C]/40"
+              className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#2E2A5C]/40"
             />
           </div>
           <div>
@@ -173,7 +173,7 @@ export default function NewClientModal({ isOpen, onClose, onCreated }: Props) {
             <select
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
-              className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none bg-white focus:border-[#2E2A5C]/40"
+              className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none bg-white focus:border-[#2E2A5C]/40"
             >
               <option>1 Month</option>
               <option>3 Months</option>
@@ -184,17 +184,17 @@ export default function NewClientModal({ isOpen, onClose, onCreated }: Props) {
         </div>
 
         {error ? (
-          <p className="text-sm text-red-500 bg-red-50 rounded-xl px-3 py-2.5">
+          <p className="text-sm text-red-500 bg-red-50 rounded-lg px-3 py-2.5">
             {error}
           </p>
         ) : null}
         {success ? (
-          <p className="text-sm text-green-600 bg-green-50 rounded-xl px-3 py-2.5">
+          <p className="text-sm text-green-600 bg-green-50 rounded-lg px-3 py-2.5">
             {success}
           </p>
         ) : null}
         {formUrl ? (
-          <div className="rounded-xl border border-dashed border-gray-200 px-3.5 py-3">
+          <div className="rounded-lg border border-dashed border-gray-200 px-3.5 py-3">
             <p className="text-xs text-gray-400 mb-1">Customer form link</p>
             <p className="text-sm text-[#2E2A5C] break-all">{formUrl}</p>
             <button

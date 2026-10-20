@@ -30,7 +30,9 @@ function RegisterForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [mode, setMode] = useState<SetupResponse["mode"] | "loading">("loading");
+  const [mode, setMode] = useState<SetupResponse["mode"] | "loading">(
+    "loading",
+  );
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const emailLocked = Boolean(token);
@@ -50,7 +52,9 @@ function RegisterForm() {
       } catch (err) {
         if (!cancelled) {
           setMode("closed");
-          setError(err instanceof Error ? err.message : "Could not load signup");
+          setError(
+            err instanceof Error ? err.message : "Could not load signup",
+          );
         }
       }
     })();
@@ -163,7 +167,11 @@ function RegisterForm() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
             >
-              {showPassword ? <EyeSlashIcon size={18} /> : <EyesIcon size={18} />}
+              {showPassword ? (
+                <EyeSlashIcon size={18} />
+              ) : (
+                <EyesIcon size={18} />
+              )}
             </button>
           </div>
           <p className="text-xs text-gray-400 mt-1.5">
@@ -182,11 +190,18 @@ function RegisterForm() {
           disabled={loading}
           className="w-full bg-[#2D266C] hover:bg-green-800 text-white font-medium py-3.5 rounded-lg transition-colors disabled:opacity-60"
         >
-          {loading ? "Saving…" : mode === "first" ? "Create account" : "Join workspace"}
+          {loading
+            ? "Saving…"
+            : mode === "first"
+              ? "Create account"
+              : "Join workspace"}
         </button>
         <p className="text-xs text-gray-500 text-center">
           Already have an account?{" "}
-          <Link href="/login" className="text-[#2D266C] font-medium hover:underline">
+          <Link
+            href="/login"
+            className="text-[#2D266C] font-medium hover:underline"
+          >
             Sign in
           </Link>
         </p>

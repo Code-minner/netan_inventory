@@ -31,7 +31,14 @@ function CustomDot(
         strokeWidth={16}
         strokeLinecap="round"
       />
-      <circle cx={cx} cy={cy} r={4} fill="#2E2A5C" stroke="white" strokeWidth={2} />
+      <circle
+        cx={cx}
+        cy={cy}
+        r={4}
+        fill="#2E2A5C"
+        stroke="white"
+        strokeWidth={2}
+      />
       <foreignObject x={cx - 18} y={cy - 38} width={36} height={24}>
         <div className="bg-[#2E2A5C] text-white text-xs font-medium rounded-full w-9 h-6 flex items-center justify-center">
           {payload.clients}
@@ -55,7 +62,7 @@ export default function ClientsGrowthChart({
   const max = Math.max(6, ...data.map((point) => point.clients), 1);
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-7 sm:p-8 flex-1">
+    <div className="bg-white rounded-lg border border-gray-100 p-7 sm:p-8 flex-1">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-gray-900">Clients Growth</h3>
         <span className="px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded-lg">
@@ -64,7 +71,10 @@ export default function ClientsGrowthChart({
       </div>
 
       <ResponsiveContainer width="100%" height={280}>
-        <LineChart data={data} margin={{ top: 20, right: 10, bottom: 0, left: -20 }}>
+        <LineChart
+          data={data}
+          margin={{ top: 20, right: 10, bottom: 0, left: -20 }}
+        >
           <CartesianGrid vertical={false} stroke="#F3F4F6" />
           <XAxis
             dataKey="month"

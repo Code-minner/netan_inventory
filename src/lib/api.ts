@@ -2,13 +2,17 @@ export async function apiFetch<T>(
   url: string,
   init?: RequestInit,
 ): Promise<T> {
+  const isFormData =
+    typeof FormData !== "undefined" && init?.body instanceof FormData;
   const response = await fetch(url, {
     ...init,
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...(init?.headers || {}),
-    },
+    headers: isFormData
+      ? { ...(init?.headers || {}) }
+      : {
+          "Content-Type": "application/json",
+          ...(init?.headers || {}),
+        },
   });
 
   const data = await response.json().catch(() => ({}));

@@ -17,8 +17,8 @@ export default function ClientsPage() {
         <div className="space-y-3">
           <h1 className="text-[22px] font-semibold text-gray-900">Clients</h1>
           <p className="text-sm text-gray-500 max-w-xl leading-relaxed">
-            Manage your clients, view their details, and track their projects and
-            payments.
+            Manage your clients, view their details, and track their projects
+            and payments.
           </p>
         </div>
 
@@ -26,7 +26,7 @@ export default function ClientsPage() {
           <button
             type="button"
             onClick={() => setNewClientOpen(true)}
-            className="flex items-center justify-center gap-2 bg-[#2E2A5C] text-white px-5 py-3 rounded-xl text-sm font-medium hover:bg-[#25214a] shrink-0"
+            className="flex items-center justify-center gap-2 bg-[#2E2A5C] text-white px-5 py-3 rounded-lg text-sm font-medium hover:bg-[#25214a] shrink-0"
           >
             <Plus size={16} />
             New Client

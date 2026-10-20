@@ -74,7 +74,7 @@ export default function Sidebar() {
                 href={item.href}
                 onClick={close}
                 className={`
-                  flex items-center gap-3 px-4 py-3 rounded-xl transition-colors
+                  flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
                   ${
                     isActive
                       ? "bg-[#2D266C]/30 text-[#2D266C]"
@@ -87,7 +87,9 @@ export default function Sidebar() {
                   filled={isActive}
                   className={isActive ? "text-[#2D266C]" : "text-[#757575]"}
                 />
-                <span className={`font-medium ${isActive ? "text-[#2D266C]" : ""}`}>
+                <span
+                  className={`font-medium ${isActive ? "text-[#2D266C]" : ""}`}
+                >
                   {item.label}
                 </span>
               </Link>

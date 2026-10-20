@@ -54,7 +54,7 @@ export default function Modal({
       onClick={onClose}
     >
       <div
-        className={`w-full ${widthClassName} bg-white rounded-2xl shadow-xl transition-all duration-200 max-h-[min(90vh,720px)] flex flex-col ${
+        className={`w-full ${widthClassName} bg-white rounded-lg shadow-xl transition-all duration-200 max-h-[min(90vh,720px)] flex flex-col ${
           visible ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -64,7 +64,7 @@ export default function Modal({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-50"
+            className="p-2 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50"
             aria-label="Close"
           >
             <X size={18} />

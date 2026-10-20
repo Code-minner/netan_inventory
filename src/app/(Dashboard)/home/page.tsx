@@ -46,8 +46,8 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="space-y-10">
-      <div className="space-y-3">
+    <div className="">
+      <div className="space-y-3 mb-8">
         <h1 className="text-2xl font-bold text-gray-900">
           Welcome back, {firstName}!
         </h1>
@@ -58,12 +58,12 @@ export default function HomePage() {
 
       <StatsCards stats={data?.stats} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="flex flex-col gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+        <div className="flex flex-col gap-2">
           <RecentActivities items={data?.recentActivities || []} />
           <ServiceOverview services={data?.services || []} />
         </div>
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-2">
           <RecentClients clients={data?.recentClients || []} />
           <RecentPayments payments={data?.recentPayments || []} />
         </div>

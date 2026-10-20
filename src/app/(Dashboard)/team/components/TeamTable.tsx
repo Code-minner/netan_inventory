@@ -58,14 +58,14 @@ export default function TeamTable() {
   }, [members, search]);
 
   return (
-    <div className="bg-white rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-gray-100 p-7 sm:p-10">
+    <div className="bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-gray-100 p-7 sm:p-10 min-h-[480px]">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-8">
         <h2 className="text-base font-semibold text-gray-900">Team Member</h2>
         {canWrite ? (
           <button
             type="button"
             onClick={() => setInviteOpen(true)}
-            className="flex items-center justify-center gap-2 bg-[#2E2A5C] text-white px-5 py-3 rounded-xl text-sm font-medium hover:bg-[#25214a]"
+            className="flex items-center justify-center gap-2 bg-[#2E2A5C] text-white px-5 py-3 rounded-lg text-sm font-medium hover:bg-[#25214a]"
           >
             <span className="text-base leading-none">+</span>
             Invite Member
@@ -82,7 +82,7 @@ export default function TeamTable() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search team member"
-          className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-600 placeholder:text-gray-400 border border-gray-200 rounded-xl outline-none focus:border-gray-300"
+          className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-600 placeholder:text-gray-400 border border-gray-200 rounded-lg outline-none focus:border-gray-300"
         />
       </div>
 
@@ -108,7 +108,7 @@ export default function TeamTable() {
           filtered.map((member) => (
             <div
               key={member.id}
-              className="flex items-center border border-gray-100 rounded-2xl px-5 py-5 hover:border-gray-200 transition-colors"
+              className="flex items-center border border-gray-100 rounded-lg px-5 py-5 hover:border-gray-200 transition-colors"
             >
               <div className="w-[28%] flex items-center gap-3 min-w-0">
                 <span className="w-10 h-10 shrink-0 rounded-full bg-orange-50 text-orange-400 flex items-center justify-center text-xs font-semibold">
@@ -161,7 +161,7 @@ export default function TeamTable() {
           <button
             type="button"
             onClick={() => setSelectedMember(null)}
-            className="px-5 py-2.5 text-sm font-medium text-white bg-[#2E2A5C] rounded-xl hover:bg-[#25214a]"
+            className="px-5 py-2.5 text-sm font-medium text-white bg-[#2E2A5C] rounded-lg hover:bg-[#25214a]"
           >
             Close
           </button>
@@ -183,19 +183,19 @@ export default function TeamTable() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3.5 text-sm">
-              <div className="rounded-xl bg-gray-50 px-3.5 py-3.5">
+              <div className="rounded-lg bg-gray-50 px-3.5 py-3.5">
                 <p className="text-xs text-gray-400 mb-1">Role</p>
                 <p className="font-medium text-gray-900">
                   {selectedMember.role}
                 </p>
               </div>
-              <div className="rounded-xl bg-gray-50 px-3.5 py-3.5">
+              <div className="rounded-lg bg-gray-50 px-3.5 py-3.5">
                 <p className="text-xs text-gray-400 mb-1">Joined</p>
                 <p className="font-medium text-gray-900">
                   {selectedMember.joined}
                 </p>
               </div>
-              <div className="rounded-xl bg-gray-50 px-3.5 py-3.5">
+              <div className="rounded-lg bg-gray-50 px-3.5 py-3.5">
                 <p className="text-xs text-gray-400 mb-1">Status</p>
                 <p className="font-medium text-gray-900">
                   {selectedMember.status}

@@ -4,10 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { EyesIcon, EyeSlashIcon } from "@/public/svg/svg";
 import { apiFetch } from "@/src/lib/api";
-import {
-  RECOVERY_STORAGE_KEY,
-  captureRecoveryHash,
-} from "@/src/lib/recovery";
+import { RECOVERY_STORAGE_KEY, captureRecoveryHash } from "@/src/lib/recovery";
 
 export default function SetPasswordPage() {
   return (
@@ -67,9 +64,11 @@ function SetPasswordForm() {
   };
 
   return (
-    <div className="w-full max-w-[420px] bg-white rounded-2xl shadow-sm border border-gray-100 px-7 sm:px-10 py-14 sm:py-16  ">
+    <div className="w-full max-w-[420px] bg-white rounded-2xl shadow-sm border border-gray-100 px-7 sm:px-10 py-14 sm:py-16">
       <div className="mb-8 text-center">
-        <h1 className="text-2xl font-semibold text-gray-900">Set a new password</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">
+          Set a new password
+        </h1>
         <p className="text-sm text-gray-500 mt-2">
           Choose a password for your Netan staff account.
         </p>
@@ -94,7 +93,11 @@ function SetPasswordForm() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
             >
-              {showPassword ? <EyeSlashIcon size={18} /> : <EyesIcon size={18} />}
+              {showPassword ? (
+                <EyeSlashIcon size={18} />
+              ) : (
+                <EyesIcon size={18} />
+              )}
             </button>
           </div>
         </div>

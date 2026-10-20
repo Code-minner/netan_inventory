@@ -42,7 +42,9 @@ export default function GenerateReportModal({ isOpen, onClose }: Props) {
       URL.revokeObjectURL(url);
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not generate report");
+      setError(
+        err instanceof Error ? err.message : "Could not generate report",
+      );
     }
   };
 
@@ -57,14 +59,14 @@ export default function GenerateReportModal({ isOpen, onClose }: Props) {
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2.5 text-sm text-gray-600 border border-gray-200 rounded-xl hover:bg-gray-50"
+            className="px-5 py-2.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50"
           >
             Cancel
           </button>
           <button
             type="submit"
             form="generate-report-form"
-            className="px-5 py-2.5 text-sm font-medium text-white bg-[#2E2A5C] rounded-xl hover:bg-[#25214a]"
+            className="px-5 py-2.5 text-sm font-medium text-white bg-[#2E2A5C] rounded-lg hover:bg-[#25214a]"
           >
             Download CSV
           </button>
@@ -83,7 +85,7 @@ export default function GenerateReportModal({ isOpen, onClose }: Props) {
           <select
             value={reportType}
             onChange={(e) => setReportType(e.target.value)}
-            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none bg-white focus:border-[#2E2A5C]/40"
+            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none bg-white focus:border-[#2E2A5C]/40"
           >
             <option>Client Report</option>
             <option>Payment Report</option>
@@ -97,7 +99,7 @@ export default function GenerateReportModal({ isOpen, onClose }: Props) {
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value)}
-            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none bg-white focus:border-[#2E2A5C]/40"
+            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none bg-white focus:border-[#2E2A5C]/40"
           >
             <option>Last 7 days</option>
             <option>Last 30 days</option>
@@ -106,7 +108,7 @@ export default function GenerateReportModal({ isOpen, onClose }: Props) {
           </select>
         </div>
         {error ? (
-          <p className="text-sm text-red-500 bg-red-50 rounded-xl px-3 py-2.5">
+          <p className="text-sm text-red-500 bg-red-50 rounded-lg px-3 py-2.5">
             {error}
           </p>
         ) : null}

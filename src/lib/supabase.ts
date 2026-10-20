@@ -38,7 +38,7 @@ function throwDbError(error: RestError | string, status: number): never {
 
   if (/column .* does not exist/i.test(message)) {
     throw new Error(
-      "Auth columns are missing. Open supabase/schema-auth.sql, paste it into the Supabase SQL editor, and run it.",
+      "Database columns are missing. Run supabase/schema-auth.sql and supabase/schema-form.sql in the Supabase SQL editor.",
     );
   }
 

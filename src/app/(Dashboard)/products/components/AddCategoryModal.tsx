@@ -18,11 +18,11 @@ interface CategoryFormData {
   imagePreview: string | null;
 }
 
-export default function AddCategoryModal({ 
-  isOpen, 
-  onClose, 
+export default function AddCategoryModal({
+  isOpen,
+  onClose,
   onAddCategory,
-  editingCategory 
+  editingCategory,
 }: AddCategoryModalProps) {
   const [visible, setVisible] = useState(false);
   const [formData, setFormData] = useState<CategoryFormData>({
@@ -132,7 +132,7 @@ export default function AddCategoryModal({
       onClick={handleClose}
     >
       <div
-        className={`w-full max-w-md bg-white shadow-2xl rounded-2xl flex flex-col transition-all duration-200 ease-out ${
+        className={`w-full max-w-md bg-white shadow-2xl rounded-lg flex flex-col transition-all duration-200 ease-out ${
           visible ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -160,12 +160,12 @@ export default function AddCategoryModal({
                 Category thumbnail
               </label>
               <div
-                className={`relative border-2 border-dashed rounded-xl p-6 text-center transition-colors ${
+                className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
                   isDragging
                     ? "border-green-500 bg-green-50"
                     : formData.imagePreview
-                    ? "border-green-500 bg-green-50/30"
-                    : "border-gray-300 hover:border-gray-400"
+                      ? "border-green-500 bg-green-50/30"
+                      : "border-gray-300 hover:border-gray-400"
                 }`}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
@@ -182,12 +182,20 @@ export default function AddCategoryModal({
                     </div>
                     <button
                       type="button"
-                      onClick={() => setFormData((prev) => ({ ...prev, image: null, imagePreview: null }))}
+                      onClick={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          image: null,
+                          imagePreview: null,
+                        }))
+                      }
                       className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
                     >
                       <CloseIcon size={14} />
                     </button>
-                    <p className="text-sm text-gray-500 mt-2">Click to change image</p>
+                    <p className="text-sm text-gray-500 mt-2">
+                      Click to change image
+                    </p>
                   </div>
                 ) : (
                   <>
@@ -195,9 +203,13 @@ export default function AddCategoryModal({
                       <UploadIcon size={24} className="text-gray-400" />
                     </div>
                     <p className="text-sm text-gray-600">
-                      <span className="text-green-600 font-medium">Upload image</span>
+                      <span className="text-green-600 font-medium">
+                        Upload image
+                      </span>
                     </p>
-                    <p className="text-xs text-gray-400 mt-1">SVG, PNG, JPG or GIF</p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      SVG, PNG, JPG or GIF
+                    </p>
                     <input
                       ref={fileInputRef}
                       type="file"
@@ -212,7 +224,10 @@ export default function AddCategoryModal({
 
             {/* Category Name */}
             <div>
-              <label htmlFor="name" className="text-sm font-medium text-gray-700 block mb-1.5">
+              <label
+                htmlFor="name"
+                className="text-sm font-medium text-gray-700 block mb-1.5"
+              >
                 Name
               </label>
               <input

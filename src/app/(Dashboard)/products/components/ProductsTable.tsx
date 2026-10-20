@@ -168,7 +168,7 @@ export default function ProductsTable() {
         </button>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-100 overflow-x-auto">
+      <div className="bg-white rounded-lg border border-gray-100 overflow-x-auto">
         <table className="w-full text-sm min-w-[640px]">
           <thead>
             <tr className="border-b border-gray-100 text-left text-gray-500">

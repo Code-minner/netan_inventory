@@ -91,7 +91,7 @@ export default function InviteMemberModal({
             type="button"
             onClick={handleClose}
             disabled={loading}
-            className="px-5 py-2.5 text-sm text-gray-600 border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-50"
+            className="px-5 py-2.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50"
           >
             Cancel
           </button>
@@ -99,7 +99,7 @@ export default function InviteMemberModal({
             type="submit"
             form="invite-member-form"
             disabled={loading}
-            className="px-5 py-2.5 text-sm font-medium text-white bg-[#2E2A5C] rounded-xl hover:bg-[#25214a] disabled:opacity-60"
+            className="px-5 py-2.5 text-sm font-medium text-white bg-[#2E2A5C] rounded-lg hover:bg-[#25214a] disabled:opacity-60"
           >
             {loading ? "Sending…" : "Send invite"}
           </button>
@@ -124,7 +124,7 @@ export default function InviteMemberModal({
             onChange={(e) => setName(e.target.value)}
             required
             placeholder="Enter name"
-            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none focus:border-[#2E2A5C]/40"
+            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#2E2A5C]/40"
           />
         </div>
 
@@ -138,7 +138,7 @@ export default function InviteMemberModal({
             onChange={(e) => setEmail(e.target.value)}
             required
             placeholder="name@company.com"
-            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none focus:border-[#2E2A5C]/40"
+            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#2E2A5C]/40"
           />
         </div>
 
@@ -149,10 +149,12 @@ export default function InviteMemberModal({
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none bg-white focus:border-[#2E2A5C]/40"
+            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none bg-white focus:border-[#2E2A5C]/40"
           >
             {STAFF_ROLE_OPTIONS.filter((option) =>
-              admin?.role === "Superadmin" ? true : option.value !== "Superadmin",
+              admin?.role === "Superadmin"
+                ? true
+                : option.value !== "Superadmin",
             ).map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -162,12 +164,12 @@ export default function InviteMemberModal({
         </div>
 
         {error ? (
-          <p className="text-sm text-red-500 bg-red-50 rounded-xl px-3 py-2.5">
+          <p className="text-sm text-red-500 bg-red-50 rounded-lg px-3 py-2.5">
             {error}
           </p>
         ) : null}
         {success ? (
-          <p className="text-sm text-green-600 bg-green-50 rounded-xl px-3 py-2.5">
+          <p className="text-sm text-green-600 bg-green-50 rounded-lg px-3 py-2.5">
             {success}
           </p>
         ) : null}

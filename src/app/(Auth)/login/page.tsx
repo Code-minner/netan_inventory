@@ -137,7 +137,10 @@ function LoginForm() {
 
         <p className="text-xs text-gray-500 text-center">
           Access is limited to Netan Technologies staff.{" "}
-          <Link href="/register" className="text-[#2D266C] font-medium hover:underline">
+          <Link
+            href="/register"
+            className="text-[#2D266C] font-medium hover:underline"
+          >
             Create first admin
           </Link>
         </p>

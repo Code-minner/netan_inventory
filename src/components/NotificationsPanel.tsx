@@ -60,8 +60,7 @@ export default function NotificationsPanel({
 
   const grouped = useMemo(() => {
     const map = new Map<string, NotificationItem[]>();
-    const filtered =
-      tab === "unread" ? items.filter((i) => i.unread) : items;
+    const filtered = tab === "unread" ? items.filter((i) => i.unread) : items;
 
     for (const item of filtered) {
       const list = map.get(item.dateGroup) || [];
@@ -103,7 +102,7 @@ export default function NotificationsPanel({
         onClick={onClose}
       />
       <aside
-        className={`absolute top-16 right-4 sm:right-8 w-[min(100%-2rem,380px)] max-h-[min(80vh,560px)] bg-white rounded-2xl shadow-xl border border-gray-100 flex flex-col transition-all duration-200 ${
+        className={`absolute top-16 right-4 sm:right-8 w-[min(100%-2rem,380px)] max-h-[min(80vh,560px)] bg-white rounded-lg shadow-xl border border-gray-100 flex flex-col transition-all duration-200 ${
           visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
         }`}
       >

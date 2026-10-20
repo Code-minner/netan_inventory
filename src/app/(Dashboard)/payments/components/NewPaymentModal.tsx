@@ -11,11 +11,7 @@ type Props = {
   onCreated?: (payment: Payment) => void;
 };
 
-export default function NewPaymentModal({
-  isOpen,
-  onClose,
-  onCreated,
-}: Props) {
+export default function NewPaymentModal({ isOpen, onClose, onCreated }: Props) {
   const [clients, setClients] = useState<Client[]>([]);
   const [clientId, setClientId] = useState("");
   const [name, setName] = useState("");
@@ -98,7 +94,7 @@ export default function NewPaymentModal({
             type="button"
             onClick={handleClose}
             disabled={loading}
-            className="px-5 py-2.5 text-sm text-gray-600 border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-50"
+            className="px-5 py-2.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50"
           >
             Cancel
           </button>
@@ -106,7 +102,7 @@ export default function NewPaymentModal({
             type="submit"
             form="new-payment-form"
             disabled={loading}
-            className="px-5 py-2.5 text-sm font-medium text-white bg-[#2E2A5C] rounded-xl hover:bg-[#25214a] disabled:opacity-60"
+            className="px-5 py-2.5 text-sm font-medium text-white bg-[#2E2A5C] rounded-lg hover:bg-[#25214a] disabled:opacity-60"
           >
             {loading ? "Saving…" : "Save payment"}
           </button>
@@ -121,7 +117,7 @@ export default function NewPaymentModal({
           <select
             value={clientId}
             onChange={(e) => handleClientChange(e.target.value)}
-            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none bg-white focus:border-[#2E2A5C]/40 mb-3"
+            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none bg-white focus:border-[#2E2A5C]/40 mb-3"
           >
             <option value="">Select existing client (optional)</option>
             {clients.map((c) => (
@@ -135,7 +131,7 @@ export default function NewPaymentModal({
             onChange={(e) => setName(e.target.value)}
             required
             placeholder="Client name"
-            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none focus:border-[#2E2A5C]/40"
+            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#2E2A5C]/40"
           />
         </div>
 
@@ -148,7 +144,7 @@ export default function NewPaymentModal({
             min={1}
             value={servicesCount}
             onChange={(e) => setServicesCount(e.target.value)}
-            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none focus:border-[#2E2A5C]/40"
+            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#2E2A5C]/40"
           />
         </div>
 
@@ -162,7 +158,7 @@ export default function NewPaymentModal({
               onChange={(e) => setAmount(e.target.value)}
               required
               placeholder="₦0"
-              className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none focus:border-[#2E2A5C]/40"
+              className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#2E2A5C]/40"
             />
           </div>
           <div>
@@ -174,7 +170,7 @@ export default function NewPaymentModal({
               onChange={(e) => setPaidAmount(e.target.value)}
               required
               placeholder="₦0"
-              className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none focus:border-[#2E2A5C]/40"
+              className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#2E2A5C]/40"
             />
           </div>
         </div>
@@ -188,7 +184,7 @@ export default function NewPaymentModal({
             onChange={(e) =>
               setStatus(e.target.value as "Completed" | "Not Completed")
             }
-            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-xl outline-none bg-white focus:border-[#2E2A5C]/40"
+            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none bg-white focus:border-[#2E2A5C]/40"
           >
             <option value="Completed">Completed</option>
             <option value="Not Completed">Not Completed</option>
@@ -196,7 +192,7 @@ export default function NewPaymentModal({
         </div>
 
         {error ? (
-          <p className="text-sm text-red-500 bg-red-50 rounded-xl px-3 py-2.5">
+          <p className="text-sm text-red-500 bg-red-50 rounded-lg px-3 py-2.5">
             {error}
           </p>
         ) : null}

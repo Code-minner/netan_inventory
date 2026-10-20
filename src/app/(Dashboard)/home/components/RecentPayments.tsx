@@ -5,7 +5,7 @@ import type { Payment } from "@/src/lib/types";
 
 export default function RecentPayments({ payments }: { payments: Payment[] }) {
   return (
-    <div className="bg-white p-7 sm:p-8 rounded-2xl border border-gray-100 w-full">
+    <div className="bg-white p-7 sm:p-8 rounded-lg border border-gray-100 w-full">
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-lg font-medium text-gray-900">Recent payments</h2>
         <Link

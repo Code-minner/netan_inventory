@@ -35,13 +35,19 @@ interface ProductFormData {
   imagePreview: string | null;
 }
 
-const categories = ["Oil and sauces", "Beverages", "Grains", "Canned goods", "Dairy"];
+const categories = [
+  "Oil and sauces",
+  "Beverages",
+  "Grains",
+  "Canned goods",
+  "Dairy",
+];
 
-export default function EditProductModal({ 
-  isOpen, 
-  onClose, 
-  product, 
-  onSave 
+export default function EditProductModal({
+  isOpen,
+  onClose,
+  product,
+  onSave,
 }: EditProductModalProps) {
   const [visible, setVisible] = useState(false);
   const [formData, setFormData] = useState<ProductFormData>({
@@ -93,11 +99,16 @@ export default function EditProductModal({
     }, 200);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
     const { name, value, type } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+      [name]:
+        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
@@ -196,12 +207,12 @@ export default function EditProductModal({
                 Product image
               </label>
               <div
-                className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
+                className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                   isDragging
                     ? "border-green-500 bg-green-50"
                     : formData.imagePreview
-                    ? "border-green-500 bg-green-50/30"
-                    : "border-gray-300 hover:border-gray-400"
+                      ? "border-green-500 bg-green-50/30"
+                      : "border-gray-300 hover:border-gray-400"
                 }`}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
@@ -220,12 +231,20 @@ export default function EditProductModal({
                     </div>
                     <button
                       type="button"
-                      onClick={() => setFormData((prev) => ({ ...prev, image: null, imagePreview: null }))}
+                      onClick={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          image: null,
+                          imagePreview: null,
+                        }))
+                      }
                       className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
                     >
                       <CloseIcon size={14} />
                     </button>
-                    <p className="text-sm text-gray-500 mt-2">Click to change image</p>
+                    <p className="text-sm text-gray-500 mt-2">
+                      Click to change image
+                    </p>
                   </div>
                 ) : (
                   <>
@@ -233,9 +252,14 @@ export default function EditProductModal({
                       <UploadIcon size={24} className="text-gray-400" />
                     </div>
                     <p className="text-sm text-gray-600">
-                      <span className="text-green-600 font-medium">Click to upload</span> or drag and drop
+                      <span className="text-green-600 font-medium">
+                        Click to upload
+                      </span>{" "}
+                      or drag and drop
                     </p>
-                    <p className="text-xs text-gray-400 mt-1">SVG, PNG, JPG or GIF (max. 800x400px)</p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      SVG, PNG, JPG or GIF (max. 800x400px)
+                    </p>
                     <input
                       ref={fileInputRef}
                       type="file"
@@ -250,7 +274,10 @@ export default function EditProductModal({
 
             {/* Product Name */}
             <div>
-              <label htmlFor="name" className="text-sm font-medium text-gray-700 block mb-1.5">
+              <label
+                htmlFor="name"
+                className="text-sm font-medium text-gray-700 block mb-1.5"
+              >
                 Product name
               </label>
               <input
@@ -267,7 +294,10 @@ export default function EditProductModal({
 
             {/* Category */}
             <div>
-              <label htmlFor="category" className="text-sm font-medium text-gray-700 block mb-1.5">
+              <label
+                htmlFor="category"
+                className="text-sm font-medium text-gray-700 block mb-1.5"
+              >
                 Category
               </label>
               <div className="flex gap-2">
@@ -323,7 +353,10 @@ export default function EditProductModal({
             {/* Price & Unit */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="amount" className="text-sm font-medium text-gray-700 block mb-1.5">
+                <label
+                  htmlFor="amount"
+                  className="text-sm font-medium text-gray-700 block mb-1.5"
+                >
                   Price
                 </label>
                 <input
@@ -338,7 +371,10 @@ export default function EditProductModal({
                 />
               </div>
               <div>
-                <label htmlFor="unit" className="text-sm font-medium text-gray-700 block mb-1.5">
+                <label
+                  htmlFor="unit"
+                  className="text-sm font-medium text-gray-700 block mb-1.5"
+                >
                   Measuring unit
                 </label>
                 <input
@@ -356,7 +392,10 @@ export default function EditProductModal({
 
             {/* Description */}
             <div>
-              <label htmlFor="description" className="text-sm font-medium text-gray-700 block mb-1.5">
+              <label
+                htmlFor="description"
+                className="text-sm font-medium text-gray-700 block mb-1.5"
+              >
                 Description
               </label>
               <textarea
@@ -382,7 +421,9 @@ export default function EditProductModal({
                 />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-600/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
               </label>
-              <span className="text-sm text-gray-700">Available (in stock?)</span>
+              <span className="text-sm text-gray-700">
+                Available (in stock?)
+              </span>
             </div>
 
             {/* Action Buttons */}

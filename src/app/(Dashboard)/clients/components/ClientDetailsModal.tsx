@@ -40,7 +40,7 @@ export default function ClientDetailsModal({ client, onClose }: Props) {
         <button
           type="button"
           onClick={onClose}
-          className="px-5 py-2.5 text-sm font-medium text-white bg-[#2E2A5C] rounded-xl hover:bg-[#25214a]"
+          className="px-5 py-2.5 text-sm font-medium text-white bg-[#2E2A5C] rounded-lg hover:bg-[#25214a]"
         >
           Close
         </button>
@@ -81,18 +81,48 @@ export default function ClientDetailsModal({ client, onClose }: Props) {
             {client.projectName ? (
               <Detail label="Project" value={client.projectName} />
             ) : null}
-            {client.budget ? (
-              <Detail label="Budget" value={client.budget} />
+            {client.orderTotal || client.budget ? (
+              <Detail
+                label="Order total"
+                value={client.orderTotal || client.budget || ""}
+              />
+            ) : null}
+            {client.paymentPercent ? (
+              <Detail label="Paid" value={`${client.paymentPercent}%`} />
+            ) : null}
+            {client.timeline ? (
+              <Detail label="Timeline" value={client.timeline} />
             ) : null}
           </div>
 
-          {client.projectDescription ? (
-            <NoteBlock label="Project description" text={client.projectDescription} />
+          {client.aboutProject || client.notes ? (
+            <NoteBlock
+              label="About project"
+              text={client.aboutProject || client.notes || ""}
+            />
           ) : null}
-          {client.goals ? <NoteBlock label="Goals" text={client.goals} /> : null}
-          {client.notes ? <NoteBlock label="Notes" text={client.notes} /> : null}
+          {client.projectDocumentUrl ? (
+            <a
+              href={client.projectDocumentUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="block text-sm font-medium text-[#2E2A5C] hover:underline"
+            >
+              View project document
+            </a>
+          ) : null}
+          {client.paymentProofUrl ? (
+            <a
+              href={client.paymentProofUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="block text-sm font-medium text-[#2E2A5C] hover:underline"
+            >
+              View payment proof
+            </a>
+          ) : null}
 
-          <div className="rounded-xl border border-dashed border-gray-200 px-4 py-3.5">
+          <div className="rounded-lg border border-dashed border-gray-200 px-4 py-3.5">
             <p className="text-xs text-gray-400 mb-1">Customer form link</p>
             <p className="text-sm text-[#2E2A5C] break-all">{formUrl}</p>
             <button
@@ -111,7 +141,7 @@ export default function ClientDetailsModal({ client, onClose }: Props) {
 
 function Detail({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl bg-gray-50 px-3.5 py-3.5">
+    <div className="rounded-lg bg-gray-50 px-3.5 py-3.5">
       <p className="text-xs text-gray-400 mb-1">{label}</p>
       <p className="font-medium text-gray-900">{value}</p>
     </div>
@@ -120,7 +150,7 @@ function Detail({ label, value }: { label: string; value: string }) {
 
 function NoteBlock({ label, text }: { label: string; text: string }) {
   return (
-    <div className="rounded-xl bg-gray-50 px-4 py-3.5">
+    <div className="rounded-lg bg-gray-50 px-4 py-3.5">
       <p className="text-xs text-gray-400 mb-1">{label}</p>
       <p className="text-sm text-gray-800 whitespace-pre-wrap">{text}</p>
     </div>

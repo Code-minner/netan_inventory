@@ -8,7 +8,7 @@ export default function RecentActivities({
   items: NotificationItem[];
 }) {
   return (
-    <div className="bg-white p-7 sm:p-8 rounded-2xl border border-gray-100 w-full">
+    <div className="bg-white p-7 sm:p-8 rounded-lg border border-gray-100 w-full">
       <h2 className="text-lg font-medium text-gray-900 mb-8">Recent Activities</h2>
 
       {items.length === 0 ? (

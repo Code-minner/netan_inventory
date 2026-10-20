@@ -3,6 +3,12 @@ export type FormStatus = "pending" | "completed";
 export type PaymentStatus = "Completed" | "Not Completed";
 export type MemberStatus = "Active" | "Ended" | "Invited";
 
+export type SelectedService = {
+  id: string;
+  title: string;
+  price: number;
+};
+
 export type Client = {
   id: string;
   name: string;
@@ -22,6 +28,13 @@ export type Client = {
   projectDescription?: string;
   budget?: string;
   goals?: string;
+  selectedServices?: SelectedService[];
+  timeline?: string;
+  projectDocumentUrl?: string;
+  aboutProject?: string;
+  paymentPercent?: number;
+  paymentProofUrl?: string;
+  orderTotal?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -36,6 +49,8 @@ export type Payment = {
   paidAmount: string;
   paidDate: string;
   status: PaymentStatus;
+  paymentPercent?: number;
+  paymentProofUrl?: string;
   createdAt: string;
 };
 

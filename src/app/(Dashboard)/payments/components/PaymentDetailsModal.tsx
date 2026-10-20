@@ -19,7 +19,7 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
         <button
           type="button"
           onClick={onClose}
-          className="px-5 py-2.5 text-sm font-medium text-white bg-[#2E2A5C] rounded-xl hover:bg-[#25214a]"
+          className="px-5 py-2.5 text-sm font-medium text-white bg-[#2E2A5C] rounded-lg hover:bg-[#25214a]"
         >
           Close
         </button>
@@ -55,7 +55,7 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
 
 function Detail({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl bg-gray-50 px-3.5 py-3.5">
+    <div className="rounded-lg bg-gray-50 px-3.5 py-3.5">
       <p className="text-xs text-gray-400 mb-1">{label}</p>
       <p className="font-medium text-gray-900">{value}</p>
     </div>

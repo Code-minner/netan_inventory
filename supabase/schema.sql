@@ -20,6 +20,13 @@ create table if not exists public.clients (
   project_description text,
   budget text,
   goals text,
+  selected_services jsonb,
+  timeline text,
+  project_document_url text,
+  about_project text,
+  payment_percent integer,
+  payment_proof_url text,
+  order_total text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -34,6 +41,8 @@ create table if not exists public.payments (
   paid_amount text not null,
   paid_date text not null,
   status text not null default 'Not Completed' check (status in ('Completed', 'Not Completed')),
+  payment_percent integer,
+  payment_proof_url text,
   created_at timestamptz not null default now()
 );
 

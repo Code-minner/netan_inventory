@@ -25,7 +25,7 @@ export default function PaymentsPage() {
           <button
             type="button"
             onClick={() => setNewPaymentOpen(true)}
-            className="flex items-center justify-center gap-2 bg-[#2E2A5C] text-white px-5 py-3 rounded-xl text-sm font-medium hover:bg-[#25214a] shrink-0"
+            className="flex items-center justify-center gap-2 bg-[#2E2A5C] text-white px-5 py-3 rounded-lg text-sm font-medium hover:bg-[#25214a] shrink-0"
           >
             <Plus size={16} />
             New Payment
