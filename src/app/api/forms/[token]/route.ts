@@ -8,7 +8,7 @@ import {
   type PaymentPercent,
   SERVICE_CATALOG,
 } from "@/src/lib/services-catalog";
-import { uploadClientFile } from "@/src/lib/storage";
+import { isAllowedClientUploadUrl } from "@/src/lib/storage";
 import {
   createId,
   formatDisplayDate,
@@ -21,26 +21,6 @@ import {
 } from "@/src/lib/store";
 
 type Params = { params: Promise<{ token: string }> };
-
-const ALLOWED_IMAGE = new Set([
-  "image/png",
-  "image/jpeg",
-  "image/jpg",
-  "image/webp",
-]);
-const MAX_BYTES = 5 * 1024 * 1024;
-
-async function readImageFile(form: FormData, key: string) {
-  const file = form.get(key);
-  if (!file || typeof file === "string") return null;
-  if (!ALLOWED_IMAGE.has(file.type)) {
-    throw new Error("Uploads must be PNG or JPG (max 5MB).");
-  }
-  if (file.size > MAX_BYTES) {
-    throw new Error("Each upload must be 5MB or smaller.");
-  }
-  return file;
-}
 
 export async function GET(_request: Request, { params }: Params) {
   try {
@@ -98,19 +78,16 @@ export async function POST(request: Request, { params }: Params) {
       );
     }
 
-    const form = await request.formData();
-    const name = String(form.get("name") || "").trim();
-    const email = String(form.get("email") || "").trim().toLowerCase();
-    const phone = String(form.get("phone") || "").trim();
-    const timeline = String(form.get("timeline") || "").trim();
-    const aboutProject = String(form.get("aboutProject") || "").trim();
-    const paymentPercent = Number(form.get("paymentPercent")) as PaymentPercent;
-    let serviceIds: string[] = [];
-    try {
-      serviceIds = JSON.parse(String(form.get("serviceIds") || "[]"));
-    } catch {
-      serviceIds = [];
-    }
+    const body = await request.json();
+    const name = String(body.name || "").trim();
+    const email = String(body.email || "").trim().toLowerCase();
+    const phone = String(body.phone || "").trim();
+    const timeline = String(body.timeline || "").trim();
+    const aboutProject = String(body.aboutProject || "").trim();
+    const paymentPercent = Number(body.paymentPercent) as PaymentPercent;
+    const serviceIds = Array.isArray(body.serviceIds) ? body.serviceIds : [];
+    const projectDocumentUrl = String(body.projectDocumentUrl || "").trim();
+    const paymentProofUrl = String(body.paymentProofUrl || "").trim();
 
     if (!name || !email || !phone) {
       return NextResponse.json(
@@ -142,8 +119,25 @@ export async function POST(request: Request, { params }: Params) {
         { status: 400 },
       );
     }
+    if (!paymentProofUrl || !isAllowedClientUploadUrl(paymentProofUrl)) {
+      return NextResponse.json(
+        { error: "Upload proof of payment before continuing." },
+        { status: 400 },
+      );
+    }
+    if (
+      projectDocumentUrl &&
+      !isAllowedClientUploadUrl(projectDocumentUrl)
+    ) {
+      return NextResponse.json(
+        { error: "Project document upload is invalid. Try uploading again." },
+        { status: 400 },
+      );
+    }
 
-    const selectedServices = getServicesByIds(serviceIds);
+    const selectedServices = getServicesByIds(
+      serviceIds.map((id: unknown) => String(id)),
+    );
     if (selectedServices.length === 0) {
       return NextResponse.json(
         { error: "Select at least one valid service." },
@@ -151,38 +145,11 @@ export async function POST(request: Request, { params }: Params) {
       );
     }
 
-    const projectDoc = await readImageFile(form, "projectDocument");
-    const paymentProof = await readImageFile(form, "paymentProof");
-    if (!paymentProof) {
-      return NextResponse.json(
-        { error: "Upload proof of payment before continuing." },
-        { status: 400 },
-      );
-    }
-
     const orderTotal = sumServicePrices(selectedServices);
     const payNow = amountForPercent(orderTotal, paymentPercent);
-    const folder = `forms/${current.id}`;
-
-    let projectDocumentUrl = current.projectDocumentUrl || "";
-    if (projectDoc) {
-      projectDocumentUrl = await uploadClientFile(
-        folder,
-        projectDoc.name || "project.png",
-        await projectDoc.arrayBuffer(),
-        projectDoc.type,
-      );
-    }
-
-    const paymentProofUrl = await uploadClientFile(
-      folder,
-      paymentProof.name || "payment-proof.png",
-      await paymentProof.arrayBuffer(),
-      paymentProof.type,
-    );
-
     const now = new Date();
     const serviceType = selectedServices.map((s) => s.title).join(", ");
+
     const client = await updateClient(current.id, {
       name,
       email,
@@ -197,7 +164,7 @@ export async function POST(request: Request, { params }: Params) {
       aboutProject,
       projectDescription: aboutProject,
       selectedServices,
-      projectDocumentUrl,
+      projectDocumentUrl: projectDocumentUrl || current.projectDocumentUrl || "",
       paymentPercent,
       paymentProofUrl,
       orderTotal: formatNaira(orderTotal),

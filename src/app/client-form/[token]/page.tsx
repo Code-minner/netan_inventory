@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { Check, ChevronDown, CloudUpload, Copy, X } from "lucide-react";
 import { apiFetch } from "@/src/lib/api";
 import { BANK_DETAILS } from "@/src/lib/bank-details";
+import { compressImageForUpload } from "@/src/lib/compress-image";
 import { formatNaira } from "@/src/lib/format";
 import {
   amountForPercent,
@@ -15,6 +16,39 @@ import {
   type CatalogService,
   type PaymentPercent,
 } from "@/src/lib/services-catalog";
+
+async function uploadFormImage(
+  token: string,
+  file: File,
+  kind: "docs" | "proof",
+) {
+  const compressed = await compressImageForUpload(file);
+  const signed = await apiFetch<{
+    signedUrl: string;
+    publicUrl: string;
+  }>(`/api/forms/${token}/upload`, {
+    method: "POST",
+    body: JSON.stringify({
+      fileName: compressed.name,
+      contentType: compressed.type,
+      kind,
+    }),
+  });
+
+  const put = await fetch(signed.signedUrl, {
+    method: "PUT",
+    headers: {
+      "Content-Type": compressed.type || "image/jpeg",
+    },
+    body: compressed,
+  });
+
+  if (!put.ok) {
+    throw new Error("Could not upload image. Try a smaller PNG or JPG.");
+  }
+
+  return signed.publicUrl;
+}
 
 type Step = "form" | "payment" | "done";
 
@@ -139,18 +173,29 @@ export default function ClientFormPage() {
     }
     setSubmitting(true);
     try {
-      const body = new FormData();
-      body.set("name", name.trim());
-      body.set("email", email.trim());
-      body.set("phone", phone.trim());
-      body.set("timeline", timeline);
-      body.set("aboutProject", about.trim());
-      body.set("paymentPercent", String(paymentPercent));
-      body.set("serviceIds", JSON.stringify(selectedIds));
-      if (projectDoc) body.set("projectDocument", projectDoc);
-      body.set("paymentProof", paymentProof);
+      const paymentProofUrl = await uploadFormImage(
+        token,
+        paymentProof,
+        "proof",
+      );
+      const projectDocumentUrl = projectDoc
+        ? await uploadFormImage(token, projectDoc, "docs")
+        : "";
 
-      await apiFetch(`/api/forms/${token}`, { method: "POST", body });
+      await apiFetch(`/api/forms/${token}`, {
+        method: "POST",
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
+          timeline,
+          aboutProject: about.trim(),
+          paymentPercent,
+          serviceIds: selectedIds,
+          projectDocumentUrl,
+          paymentProofUrl,
+        }),
+      });
       setStep("done");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to submit");
