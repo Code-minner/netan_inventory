@@ -42,6 +42,7 @@ export async function createSignedClientUpload(
         Authorization: `Bearer ${key}`,
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({}),
     },
   );
 
