@@ -16,13 +16,13 @@ export default function ServiceOverview({
           Services appear after clients complete their forms.
         </p>
       ) : (
-        <div className="grid grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {services.map((service) => (
             <div
               key={service.title}
-              className="border border-gray-100 rounded-lg p-5 flex flex-col justify-end aspect-square"
+              className="border border-gray-100 rounded-lg p-5 flex flex-col justify-end sm:aspect-square min-h-[120px]"
             >
-              <p className="text-xs text-gray-600 mb-1 truncate">
+              <p className="text-xs text-gray-600 mb-1 line-clamp-2">
                 {service.title}
               </p>
               <p className="text-2xl font-semibold text-gray-900">

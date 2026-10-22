@@ -6,7 +6,12 @@ interface IconProps extends SVGProps<SVGSVGElement> {
   filled?: boolean;
 }
 
-export function DashboardIcon({ size = 20, filled, className, ...props }: IconProps) {
+export function DashboardIcon({
+  size = 20,
+  filled,
+  className,
+  ...props
+}: IconProps) {
   return (
     <svg
       width={size}
@@ -92,7 +97,12 @@ export function VerifyEmailIcon({ size = 20, ...props }: IconProps) {
   );
 }
 
-export function PaymentsIcon({ size = 20, className, filled: _filled, ...props }: IconProps) {
+export function PaymentsIcon({
+  size = 20,
+  className,
+  filled: _filled,
+  ...props
+}: IconProps) {
   return (
     <svg
       width={size}
@@ -111,7 +121,12 @@ export function PaymentsIcon({ size = 20, className, filled: _filled, ...props }
   );
 }
 
-export function ReportsIcon({ size = 20, className, filled: _filled, ...props }: IconProps) {
+export function ReportsIcon({
+  size = 20,
+  className,
+  filled: _filled,
+  ...props
+}: IconProps) {
   return (
     <svg
       width={size}
@@ -130,7 +145,12 @@ export function ReportsIcon({ size = 20, className, filled: _filled, ...props }:
   );
 }
 
-export function TeamIcon({ size = 20, className, filled: _filled, ...props }: IconProps) {
+export function TeamIcon({
+  size = 20,
+  className,
+  filled: _filled,
+  ...props
+}: IconProps) {
   return (
     <svg
       className={className}
@@ -149,7 +169,12 @@ export function TeamIcon({ size = 20, className, filled: _filled, ...props }: Ic
   );
 }
 
-export function SettingsIcon({ size = 20, filled, className, ...props }: IconProps) {
+export function SettingsIcon({
+  size = 20,
+  filled,
+  className,
+  ...props
+}: IconProps) {
   return (
     <svg
       width={size}
@@ -180,7 +205,12 @@ export function SettingsIcon({ size = 20, filled, className, ...props }: IconPro
   );
 }
 
-export function CustomersIcon({ size = 20, filled, className, ...props }: IconProps) {
+export function CustomersIcon({
+  size = 20,
+  filled,
+  className,
+  ...props
+}: IconProps) {
   return (
     <svg
       width={size}
@@ -957,6 +987,50 @@ export function PhoneIcon({ size = 20, ...props }: IconProps) {
         stroke="black"
         strokeWidth="1.25"
         strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function CongratulationIcon({ size = 100, ...props }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 100 100"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M96.1538 50C96.1538 75.4901 75.4901 96.1538 50 96.1538C24.5099 96.1538 3.84615 75.4901 3.84615 50C3.84615 24.5099 24.5099 3.84615 50 3.84615C75.4901 3.84615 96.1538 24.5099 96.1538 50Z"
+        strokeWidth="7.69231"
+        stroke="#19153B"
+      />
+      <mask
+        id="mask0_360_2896"
+        style={{ maskType: "alpha" }}
+        maskUnits="userSpaceOnUse"
+        x="11"
+        y="11"
+        width="78"
+        height="78"
+      >
+        <circle cx="49.9983" cy="50.0003" r="38.055" fill="#7F7FE7" />
+      </mask>
+      <g mask="url(#mask0_360_2896)">
+        <circle cx="49.9983" cy="50.0003" r="38.055" fill="#BEBCD1" />
+        <path
+          d="M93.9359 58.7125L75.3569 34.2861L37.1426 63.5718C44.3395 71.4001 63.8602 88.6367 64.7693 90.1519C65.6784 91.667 83.5824 70.96 93.9359 58.7125Z"
+          fill="#19153B"
+        />
+      </g>
+      <path
+        d="M30.6826 48.3328L45.4559 62.8791L70.0766 38.6367"
+        strokeWidth="13.4615"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        stroke="white"
       />
     </svg>
   );

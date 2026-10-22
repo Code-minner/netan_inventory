@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Search, MoreVertical } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import InviteMemberModal from "./InviteMemberModal";
 import Modal from "@/src/components/Modal";
+import { SearchIcon } from "@/public/svg/svg";
 import { apiFetch } from "@/src/lib/api";
 import type { MemberStatus, TeamMember } from "@/src/lib/types";
 import { useAuth } from "@/src/components/AuthProvider";
@@ -73,17 +74,18 @@ export default function TeamTable() {
         ) : null}
       </div>
 
-      <div className="relative w-full sm:w-72 pb-8">
-        <Search
-          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
-          size={16}
-        />
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search team member"
-          className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-600 placeholder:text-gray-400 border border-gray-200 rounded-lg outline-none focus:border-gray-300"
-        />
+      <div className="w-full sm:w-72 pb-8">
+        <div className="relative">
+          <span className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-gray-400">
+            <SearchIcon size={16} />
+          </span>
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search team member"
+            className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-600 placeholder:text-gray-400 border border-gray-200 rounded-lg outline-none focus:border-gray-300"
+          />
+        </div>
       </div>
 
       <div className="hidden md:flex items-center px-4 pb-4 text-gray-400 text-sm">
@@ -108,30 +110,45 @@ export default function TeamTable() {
           filtered.map((member) => (
             <div
               key={member.id}
-              className="flex items-center border border-gray-100 rounded-lg px-5 py-5 hover:border-gray-200 transition-colors"
+              className="flex flex-col md:flex-row md:items-center gap-3 border border-gray-100 rounded-lg px-5 py-5 hover:border-gray-200 transition-colors"
             >
-              <div className="w-[28%] flex items-center gap-3 min-w-0">
+              <div className="md:w-[28%] flex items-center gap-3 min-w-0">
                 <span className="w-10 h-10 shrink-0 rounded-full bg-orange-50 text-orange-400 flex items-center justify-center text-xs font-semibold">
                   {member.initials}
                 </span>
-                <span className="text-gray-800 text-sm font-medium truncate">
-                  {member.name}
-                </span>
+                <div className="min-w-0">
+                  <p className="text-gray-800 text-sm font-medium truncate">
+                    {member.name}
+                  </p>
+                  <p className="text-xs text-gray-400 md:hidden truncate">
+                    {member.email}
+                  </p>
+                </div>
               </div>
 
-              <div className="w-[26%] text-gray-700 text-sm truncate pr-2">
+              <div className="hidden md:block md:w-[26%] text-gray-700 text-sm truncate pr-2">
                 {member.email}
               </div>
-              <div className="w-[16%] text-gray-700 text-sm">{member.role}</div>
-              <div className="w-[16%] text-gray-700 text-sm">
+              <div className="md:w-[16%] text-gray-700 text-sm">
+                {member.role}
+              </div>
+              <div className="hidden md:block md:w-[16%] text-gray-700 text-sm">
                 {member.joined}
               </div>
 
-              <div className="w-[10%]">
+              <div className="md:w-[10%] flex items-center justify-between gap-3">
                 <StatusBadge status={member.status} />
+                <button
+                  type="button"
+                  onClick={() => setSelectedMember(member)}
+                  className="text-gray-400 hover:text-gray-600 md:hidden p-1"
+                  aria-label={`View ${member.name}`}
+                >
+                  <MoreVertical size={18} />
+                </button>
               </div>
 
-              <div className="w-[4%] flex justify-end">
+              <div className="hidden md:flex md:w-[4%] justify-end">
                 <button
                   type="button"
                   onClick={() => setSelectedMember(member)}

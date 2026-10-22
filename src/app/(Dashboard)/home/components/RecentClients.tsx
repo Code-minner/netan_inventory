@@ -5,7 +5,7 @@ import type { Client } from "@/src/lib/types";
 
 export default function RecentClients({ clients }: { clients: Client[] }) {
   return (
-    <div className="bg-white p-7 sm:p-8 rounded-lg border border-gray-100 w-full">
+    <div className="bg-white p-7 sm:p-8 rounded-lg border border-gray-100 w-full lg:min-h-[300px]">
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-lg font-medium text-gray-900">Recent clients</h2>
         <Link

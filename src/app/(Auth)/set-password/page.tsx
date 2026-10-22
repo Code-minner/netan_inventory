@@ -85,7 +85,7 @@ function SetPasswordForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
-              className="w-full pl-5 pr-12 py-3.5 text-gray-700 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600/20 focus:border-green-600 transition-all"
+              className="w-full pl-5 pr-12 py-3.5 text-gray-700 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D266C]/20 focus:border-[#2D266C] transition-all"
               required
             />
             <button
@@ -110,7 +110,7 @@ function SetPasswordForm() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="Confirm password"
-            className="w-full pl-5 pr-4 py-3.5 text-gray-700 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600/20 focus:border-green-600 transition-all"
+            className="w-full pl-5 pr-4 py-3.5 text-gray-700 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D266C]/20 focus:border-[#2D266C] transition-all"
             required
           />
         </div>
@@ -124,7 +124,7 @@ function SetPasswordForm() {
         <button
           type="submit"
           disabled={loading || !canSave}
-          className="w-full bg-[#2D266C] hover:bg-green-800 text-white font-medium py-3.5 rounded-lg transition-colors disabled:opacity-60"
+          className="w-full bg-[#2D266C] hover:bg-[#25214a] text-white font-medium py-3.5 rounded-lg transition-colors disabled:opacity-60"
         >
           {loading ? "Saving…" : "Save password"}
         </button>

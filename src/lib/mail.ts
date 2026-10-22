@@ -6,6 +6,32 @@ type SendEmailInput = {
   text?: string;
 };
 
+function cleanEnv(value: string | undefined) {
+  return (value || "").trim().replace(/^['"]|['"]$/g, "");
+}
+
+function zeptoErrorMessage(body: unknown, status: number) {
+  const b = (body || {}) as {
+    message?: string;
+    error?: { message?: string; code?: string; details?: unknown };
+    data?: { message?: string; error?: { message?: string } };
+    details?: Array<{ message?: string; code?: string }>;
+  };
+
+  const detail =
+    b.details?.map((d) => d.message || d.code).filter(Boolean).join("; ") ||
+    "";
+
+  return (
+    b.error?.message ||
+    b.data?.error?.message ||
+    b.data?.message ||
+    b.message ||
+    detail ||
+    `ZeptoMail error (${status})`
+  );
+}
+
 export async function sendEmail({
   to,
   toName,
@@ -13,11 +39,15 @@ export async function sendEmail({
   html,
   text,
 }: SendEmailInput) {
-  const apiKey = process.env.ZEPTOMAIL_API_KEY;
-  const from = process.env.EMAIL_FROM;
-  const fromName = process.env.EMAIL_FROM_NAME || "Netan";
+  const apiKey = cleanEnv(process.env.ZEPTOMAIL_API_KEY).replace(
+    /^Zoho-enczapikey\s+/i,
+    "",
+  );
+  const from = cleanEnv(process.env.EMAIL_FROM);
+  const fromName = cleanEnv(process.env.EMAIL_FROM_NAME) || "Netan";
   const apiUrl =
-    process.env.ZEPTOMAIL_API_URL || "https://api.zeptomail.com/v1.1/email";
+    cleanEnv(process.env.ZEPTOMAIL_API_URL) ||
+    "https://api.zeptomail.com/v1.1/email";
 
   if (!apiKey || !from) {
     throw new Error(
@@ -63,12 +93,7 @@ export async function sendEmail({
   const body = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    const message =
-      (body as { message?: string; data?: { message?: string } })?.data
-        ?.message ||
-      (body as { message?: string })?.message ||
-      `ZeptoMail error (${response.status})`;
-    throw new Error(message);
+    throw new Error(zeptoErrorMessage(body, response.status));
   }
 
   return body;

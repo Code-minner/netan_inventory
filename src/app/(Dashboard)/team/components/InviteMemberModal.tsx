@@ -25,7 +25,10 @@ export default function InviteMemberModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [emailFailed, setEmailFailed] = useState(false);
   const [inviteUrl, setInviteUrl] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [invited, setInvited] = useState(false);
 
   const reset = () => {
     setName("");
@@ -33,7 +36,10 @@ export default function InviteMemberModal({
     setRole("Admin");
     setError("");
     setSuccess("");
+    setEmailFailed(false);
     setInviteUrl("");
+    setCopied(false);
+    setInvited(false);
   };
 
   const handleClose = () => {
@@ -42,11 +48,24 @@ export default function InviteMemberModal({
     onClose();
   };
 
+  const copyLink = async () => {
+    if (!inviteUrl) return;
+    try {
+      await navigator.clipboard.writeText(inviteUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      setCopied(false);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (invited) return;
     setLoading(true);
     setError("");
     setSuccess("");
+    setEmailFailed(false);
     try {
       const data = await apiFetch<{
         member: TeamMember;
@@ -64,10 +83,12 @@ export default function InviteMemberModal({
 
       onInvited?.(data.member);
       setInviteUrl(data.inviteUrl || "");
+      setInvited(true);
 
       if (data.emailSent) {
         setSuccess("Invite sent successfully.");
       } else {
+        setEmailFailed(true);
         setSuccess(
           `Member added, but email failed${data.emailError ? `: ${data.emailError}` : "."} Copy the invite link below.`,
         );
@@ -93,16 +114,18 @@ export default function InviteMemberModal({
             disabled={loading}
             className="px-5 py-2.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50"
           >
-            Cancel
+            {invited ? "Close" : "Cancel"}
           </button>
-          <button
-            type="submit"
-            form="invite-member-form"
-            disabled={loading}
-            className="px-5 py-2.5 text-sm font-medium text-white bg-[#2E2A5C] rounded-lg hover:bg-[#25214a] disabled:opacity-60"
-          >
-            {loading ? "Sending…" : "Send invite"}
-          </button>
+          {!invited ? (
+            <button
+              type="submit"
+              form="invite-member-form"
+              disabled={loading}
+              className="px-5 py-2.5 text-sm font-medium text-white bg-[#2E2A5C] rounded-lg hover:bg-[#25214a] disabled:opacity-60"
+            >
+              {loading ? "Sending…" : "Send invite"}
+            </button>
+          ) : null}
         </>
       }
     >
@@ -112,7 +135,7 @@ export default function InviteMemberModal({
         className="space-y-5"
       >
         <p className="text-sm text-gray-500">
-          We’ll email an invite link so they can join the workspace.
+          We&apos;ll email an invite link so they can join the workspace.
         </p>
 
         <div>
@@ -123,8 +146,9 @@ export default function InviteMemberModal({
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
+            disabled={invited}
             placeholder="Enter name"
-            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#2E2A5C]/40"
+            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#2E2A5C]/40 disabled:bg-gray-50"
           />
         </div>
 
@@ -137,8 +161,9 @@ export default function InviteMemberModal({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            disabled={invited}
             placeholder="name@company.com"
-            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#2E2A5C]/40"
+            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#2E2A5C]/40 disabled:bg-gray-50"
           />
         </div>
 
@@ -149,7 +174,8 @@ export default function InviteMemberModal({
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none bg-white focus:border-[#2E2A5C]/40"
+            disabled={invited}
+            className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none bg-white focus:border-[#2E2A5C]/40 disabled:bg-gray-50"
           >
             {STAFF_ROLE_OPTIONS.filter((option) =>
               admin?.role === "Superadmin"
@@ -169,12 +195,28 @@ export default function InviteMemberModal({
           </p>
         ) : null}
         {success ? (
-          <p className="text-sm text-green-600 bg-green-50 rounded-lg px-3 py-2.5">
+          <p
+            className={`text-sm rounded-lg px-3 py-2.5 ${
+              emailFailed
+                ? "text-amber-800 bg-amber-50"
+                : "text-green-700 bg-green-50"
+            }`}
+          >
             {success}
           </p>
         ) : null}
         {inviteUrl ? (
-          <p className="text-sm text-[#2E2A5C] break-all">{inviteUrl}</p>
+          <div className="rounded-lg border border-dashed border-gray-200 px-3.5 py-3 space-y-2">
+            <p className="text-xs text-gray-400">Invite link</p>
+            <p className="text-sm text-[#2E2A5C] break-all">{inviteUrl}</p>
+            <button
+              type="button"
+              onClick={() => void copyLink()}
+              className="text-sm font-medium text-[#2E2A5C] hover:underline"
+            >
+              {copied ? "Copied" : "Copy link"}
+            </button>
+          </div>
         ) : null}
       </form>
     </Modal>

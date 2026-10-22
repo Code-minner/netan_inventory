@@ -52,7 +52,7 @@ export default function ResetPasswordPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Example@gmail.com"
-            className="w-full pl-5 pr-4 py-3.5 text-gray-700 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600/20 focus:border-green-600 transition-all"
+            className="w-full pl-5 pr-4 py-3.5 text-gray-700 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D266C]/20 focus:border-[#2D266C] transition-all"
             required
           />
         </div>
@@ -66,7 +66,7 @@ export default function ResetPasswordPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#2D266C] text-white font-medium py-3.5 rounded-lg transition-colors disabled:opacity-60"
+          className="w-full bg-[#2D266C] hover:bg-[#25214a] text-white font-medium py-3.5 rounded-lg transition-colors disabled:opacity-60"
         >
           {loading ? "Sending…" : "Send Reset Link"}
         </button>

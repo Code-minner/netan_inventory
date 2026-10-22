@@ -69,7 +69,7 @@ function LoginForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Example@gmail.com"
-            className="w-full pl-5 pr-4 py-3.5 text-gray-700 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600/20 focus:border-green-600 transition-all"
+            className="w-full pl-5 pr-4 py-3.5 text-gray-700 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D266C]/20 focus:border-[#2D266C] transition-all"
             required
           />
         </div>
@@ -81,7 +81,7 @@ function LoginForm() {
             </label>
             <Link
               href="/reset-password"
-              className="text-sm text-green-700 hover:text-green-800 font-medium transition-colors"
+              className="text-sm text-[#2D266C] hover:text-[#25214a] font-medium transition-colors"
             >
               Forgot password?
             </Link>
@@ -92,7 +92,7 @@ function LoginForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
-              className="w-full pl-5 pr-12 py-3.5 text-gray-700 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600/20 focus:border-green-600 transition-all"
+              className="w-full pl-5 pr-12 py-3.5 text-gray-700 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D266C]/20 focus:border-[#2D266C] transition-all"
               required
             />
             <button
@@ -114,7 +114,7 @@ function LoginForm() {
             type="checkbox"
             checked={staySignedIn}
             onChange={(e) => setStaySignedIn(e.target.checked)}
-            className="form-checkbox h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+            className="form-checkbox h-5 w-5 text-[#2D266C] focus:ring-[#2D266C] border-gray-300 rounded"
           />
           <label className="ml-2 block text-sm text-gray-700">
             Stay signed in
@@ -130,7 +130,7 @@ function LoginForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#2D266C] hover:bg-green-800 text-white font-medium py-3.5 rounded-lg transition-colors disabled:opacity-60"
+          className="w-full bg-[#2D266C] hover:bg-[#25214a] text-white font-medium py-3.5 rounded-lg transition-colors disabled:opacity-60"
         >
           {loading ? "Signing in…" : "Sign in"}
         </button>

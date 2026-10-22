@@ -46,7 +46,20 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
             <Detail label="Paid" value={payment.paidAmount} />
             <Detail label="Paid date" value={payment.paidDate} />
             <Detail label="Status" value={payment.status} />
+            {payment.paymentPercent ? (
+              <Detail label="Percent" value={`${payment.paymentPercent}%`} />
+            ) : null}
           </div>
+          {payment.paymentProofUrl ? (
+            <a
+              href={payment.paymentProofUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="block text-sm font-medium text-[#2E2A5C] hover:underline"
+            >
+              View payment proof
+            </a>
+          ) : null}
         </div>
       ) : null}
     </Modal>

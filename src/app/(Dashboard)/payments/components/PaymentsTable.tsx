@@ -2,12 +2,12 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  Search,
   SlidersHorizontal,
   ArrowUpDown,
   MoreVertical,
   Check,
 } from "lucide-react";
+import { SearchIcon } from "@/public/svg/svg";
 import PaymentDetailsModal from "./PaymentDetailsModal";
 import { apiFetch } from "@/src/lib/api";
 import type { Payment, PaymentStatus } from "@/src/lib/types";
@@ -180,10 +180,9 @@ export default function PaymentsTable({ refreshKey = 0 }: Props) {
     <div className="bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-gray-100 p-7 sm:p-10 min-h-[480px]">
       <div className="flex flex-wrap items-center gap-3 pb-8">
         <div className="relative w-full sm:w-64">
-          <Search
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
-            size={16}
-          />
+          <span className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-gray-400">
+            <SearchIcon size={16} />
+          </span>
           <input
             value={search}
             onChange={(e) => {
@@ -317,29 +316,34 @@ export default function PaymentsTable({ refreshKey = 0 }: Props) {
           visiblePayments.map((payment) => (
             <div
               key={payment.id}
-              className="flex items-center border border-gray-100 rounded-lg px-5 py-5 hover:border-gray-200 transition-colors"
+              className="flex flex-col md:flex-row md:items-center gap-3 border border-gray-100 rounded-lg px-5 py-5 hover:border-gray-200 transition-colors"
             >
-              <div className="w-[28%] flex items-center gap-3 min-w-0">
+              <div className="md:w-[28%] flex items-center gap-3 min-w-0">
                 <span className="w-10 h-10 shrink-0 rounded-full bg-orange-50 text-orange-400 flex items-center justify-center text-xs font-semibold">
                   {payment.initials}
                 </span>
-                <span className="text-gray-800 text-sm font-medium truncate">
-                  {payment.name}
-                </span>
+                <div className="min-w-0">
+                  <p className="text-gray-800 text-sm font-medium truncate">
+                    {payment.name}
+                  </p>
+                  <p className="text-xs text-gray-400 md:hidden mt-0.5">
+                    {payment.amount} · {payment.paidAmount}
+                  </p>
+                </div>
               </div>
 
-              <div className="w-[18%]">
+              <div className="md:w-[18%]">
                 <span className="inline-block bg-gray-100 text-gray-600 text-xs px-3 py-1.5 rounded-full">
                   {payment.servicesCount}{" "}
                   {payment.servicesCount === 1 ? "Service" : "Services"}
                 </span>
               </div>
 
-              <div className="w-[16%] text-gray-700 text-sm">
+              <div className="hidden md:block md:w-[16%] text-gray-700 text-sm">
                 {payment.amount}
               </div>
 
-              <div className="w-[18%]">
+              <div className="hidden md:block md:w-[18%]">
                 <div className="text-gray-800 text-sm font-medium">
                   {payment.paidAmount}
                 </div>
@@ -348,11 +352,19 @@ export default function PaymentsTable({ refreshKey = 0 }: Props) {
                 </div>
               </div>
 
-              <div className="w-[16%]">
+              <div className="md:w-[16%] flex items-center justify-between gap-3">
                 <StatusBadge status={payment.status} />
+                <button
+                  type="button"
+                  onClick={() => setSelectedPayment(payment)}
+                  className="text-gray-400 hover:text-gray-600 md:hidden p-1"
+                  aria-label={`View payment for ${payment.name}`}
+                >
+                  <MoreVertical size={18} />
+                </button>
               </div>
 
-              <div className="w-[4%] flex justify-end">
+              <div className="hidden md:flex md:w-[4%] justify-end">
                 <button
                   type="button"
                   onClick={() => setSelectedPayment(payment)}

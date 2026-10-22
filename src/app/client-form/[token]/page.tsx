@@ -3,7 +3,13 @@
 import Image from "next/image";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { Check, ChevronDown, CloudUpload, Copy, X } from "lucide-react";
+import {
+  BackArrow,
+  ChevronDownIcon,
+  CloseIcon,
+  CongratulationIcon,
+  UploadIcon,
+} from "@/public/svg/svg";
 import { apiFetch } from "@/src/lib/api";
 import { BANK_DETAILS } from "@/src/lib/bank-details";
 import { compressImageForUpload } from "@/src/lib/compress-image";
@@ -50,7 +56,7 @@ async function uploadFormImage(
   return signed.publicUrl;
 }
 
-type Step = "form" | "payment" | "done";
+type Step = "form" | "payment" | "success" | "complete";
 
 type FormClient = {
   id: string;
@@ -75,6 +81,7 @@ export default function ClientFormPage() {
   const [step, setStep] = useState<Step>("form");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [loadError, setLoadError] = useState("");
   const [error, setError] = useState("");
   const [catalog, setCatalog] = useState<CatalogService[]>(SERVICE_CATALOG);
   const [bank, setBank] = useState(BANK_DETAILS);
@@ -90,10 +97,12 @@ export default function ClientFormPage() {
 
   const [projectDoc, setProjectDoc] = useState<File | null>(null);
   const [paymentProof, setPaymentProof] = useState<File | null>(null);
+  const [fileError, setFileError] = useState("");
   const [copied, setCopied] = useState(false);
 
   const projectInputRef = useRef<HTMLInputElement>(null);
   const proofInputRef = useRef<HTMLInputElement>(null);
+  const servicesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -106,10 +115,12 @@ export default function ClientFormPage() {
         setName(data.client.name || "");
         setEmail(data.client.email || "");
         setPhone(data.client.phone || "");
-        if (data.client.formStatus === "completed") setStep("done");
+        if (data.client.formStatus === "completed") setStep("complete");
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Invalid form link");
+          setLoadError(
+            err instanceof Error ? err.message : "Invalid form link",
+          );
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -119,6 +130,27 @@ export default function ClientFormPage() {
       cancelled = true;
     };
   }, [token]);
+
+  useEffect(() => {
+    if (!servicesOpen) return;
+    const onPointer = (e: MouseEvent) => {
+      if (
+        servicesRef.current &&
+        !servicesRef.current.contains(e.target as Node)
+      ) {
+        setServicesOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setServicesOpen(false);
+    };
+    document.addEventListener("mousedown", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [servicesOpen]);
 
   const selectedServices = useMemo(
     () => getServicesByIds(selectedIds),
@@ -150,7 +182,9 @@ export default function ClientFormPage() {
     }
     if (selectedIds.length === 0) return "Select at least one service.";
     if (!timeline) return "Choose a project timeline date.";
-    if (about.length > 1000) return "About text must be 1000 characters or fewer.";
+    if (about.length > 1000) {
+      return "About text must be 1000 characters or fewer.";
+    }
     return "";
   };
 
@@ -196,7 +230,7 @@ export default function ClientFormPage() {
           paymentProofUrl,
         }),
       });
-      setStep("done");
+      setStep("success");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to submit");
     } finally {
@@ -232,16 +266,29 @@ export default function ClientFormPage() {
       <main className="mx-auto max-w-6xl px-5 sm:px-8 py-10 sm:py-14">
         {loading ? (
           <p className="text-sm text-gray-500 text-center py-20">Loading…</p>
-        ) : error && step === "form" && !name && !email ? (
+        ) : loadError ? (
           <div className="bg-white rounded-2xl border border-gray-100 p-10 text-center text-sm text-red-500">
-            {error}
+            {loadError}
+          </div>
+        ) : step === "complete" ? (
+          <div className="max-w-md mx-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-8 sm:p-10 text-center space-y-4">
+            <div className="flex justify-center">
+              <CongratulationIcon size={88} />
+            </div>
+            <h1 className="text-xl font-semibold text-gray-900">
+              Form already submitted
+            </h1>
+            <p className="text-sm text-gray-500 leading-relaxed">
+              This onboarding link has already been completed. If you need to
+              update anything, contact the Netan team.
+            </p>
           </div>
         ) : step === "form" ? (
           <form
             onSubmit={goToPayment}
             className="grid grid-cols-1 lg:grid-cols-[1.4fr_0.9fr] gap-6 lg:gap-8 items-start"
           >
-            <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-7 sm:p-10 space-y-7 min-h-[480px]">
+            <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-7 sm:p-10 space-y-7 lg:min-h-[480px]">
               <div className="space-y-2">
                 <h1 className="text-2xl sm:text-[28px] font-semibold text-gray-900 tracking-tight">
                   Client Onboarding Form
@@ -279,7 +326,7 @@ export default function ClientFormPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div className="relative">
+                <div className="relative" ref={servicesRef}>
                   <label className="block text-sm font-medium text-gray-600 mb-2">
                     Service
                   </label>
@@ -297,7 +344,10 @@ export default function ClientFormPage() {
                     >
                       {serviceLabel}
                     </span>
-                    <ChevronDown size={16} className="text-gray-400 shrink-0" />
+                    <ChevronDownIcon
+                      size={16}
+                      className="text-gray-400 shrink-0"
+                    />
                   </button>
                   {servicesOpen ? (
                     <div className="absolute z-20 mt-2 w-full rounded-xl border border-gray-200 bg-white shadow-lg py-2 max-h-64 overflow-y-auto">
@@ -310,17 +360,19 @@ export default function ClientFormPage() {
                             onClick={() => toggleService(service.id)}
                             className="w-full flex items-center justify-between gap-3 px-4 py-2.5 text-left text-sm hover:bg-gray-50"
                           >
-                            <span className="text-gray-800">{service.title}</span>
+                            <span className="text-gray-800">
+                              {service.title}
+                            </span>
                             <span className="flex items-center gap-2 text-gray-500">
                               {formatNaira(service.price)}
                               <span
-                                className={`w-4 h-4 rounded border flex items-center justify-center ${
+                                className={`w-4 h-4 rounded border flex items-center justify-center text-[10px] ${
                                   checked
                                     ? "bg-[#2E2A5C] border-[#2E2A5C] text-white"
                                     : "border-gray-300"
                                 }`}
                               >
-                                {checked ? <Check size={10} /> : null}
+                                {checked ? "✓" : null}
                               </span>
                             </span>
                           </button>
@@ -345,11 +397,15 @@ export default function ClientFormPage() {
               </div>
 
               <FileDrop
-                label="Upload Project Document"
+                label="Upload Project Image"
                 file={projectDoc}
                 inputRef={projectInputRef}
-                onPick={setProjectDoc}
+                onPick={(file) => {
+                  setFileError("");
+                  setProjectDoc(file);
+                }}
                 onClear={() => setProjectDoc(null)}
+                onError={setFileError}
               />
 
               <div>
@@ -369,6 +425,11 @@ export default function ClientFormPage() {
                 </div>
               </div>
 
+              {fileError ? (
+                <p className="text-sm text-amber-700 bg-amber-50 rounded-xl px-4 py-3">
+                  {fileError}
+                </p>
+              ) : null}
               {error ? (
                 <p className="text-sm text-red-500 bg-red-50 rounded-xl px-4 py-3">
                   {error}
@@ -376,7 +437,7 @@ export default function ClientFormPage() {
               ) : null}
             </section>
 
-            <aside className="bg-white rounded-2xl border border-gray-100 shadow-sm p-7 sm:p-8 lg:sticky lg:top-8 space-y-6 min-h-[480px] flex flex-col">
+            <aside className="bg-white rounded-2xl border border-gray-100 shadow-sm p-7 sm:p-8 lg:sticky lg:top-8 space-y-6 lg:min-h-[480px] flex flex-col">
               <h2 className="text-lg font-semibold text-gray-900">
                 Order Summary
               </h2>
@@ -416,26 +477,31 @@ export default function ClientFormPage() {
                 completion or as agreed.
               </p>
 
-              <div className="space-y-3">
+              <div
+                className="space-y-3"
+                role="radiogroup"
+                aria-label="Payment percent"
+              >
                 {PERCENTS.map((percent) => (
                   <label
                     key={percent}
                     className="flex items-center gap-3 cursor-pointer text-sm text-gray-800"
                   >
                     <input
-                      type="checkbox"
+                      type="radio"
+                      name="paymentPercent"
                       checked={paymentPercent === percent}
                       onChange={() => setPaymentPercent(percent)}
                       className="sr-only"
                     />
                     <span
-                      className={`w-5 h-5 rounded border flex items-center justify-center ${
+                      className={`w-5 h-5 rounded-full border flex items-center justify-center text-[10px] ${
                         paymentPercent === percent
                           ? "bg-[#2E2A5C] border-[#2E2A5C] text-white"
                           : "border-gray-300 bg-white"
                       }`}
                     >
-                      {paymentPercent === percent ? <Check size={12} /> : null}
+                      {paymentPercent === percent ? "✓" : null}
                     </span>
                     {percent}%
                   </label>
@@ -452,17 +518,18 @@ export default function ClientFormPage() {
           </form>
         ) : step === "payment" ? (
           <div className="max-w-xl mx-auto">
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-7 sm:p-10 space-y-8 min-h-[480px]">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-7 sm:p-10 space-y-8 lg:min-h-[480px]">
               <button
                 type="button"
                 onClick={() => {
                   setError("");
                   setStep("form");
                 }}
-                className="text-gray-500 hover:text-gray-800"
+                className="text-gray-500 hover:text-gray-800 inline-flex items-center gap-2"
                 aria-label="Back"
               >
-                ←
+                <BackArrow size={18} />
+                <span className="text-sm">Back</span>
               </button>
 
               <div>
@@ -486,14 +553,11 @@ export default function ClientFormPage() {
                     <button
                       type="button"
                       onClick={copyAccount}
-                      className="text-gray-400 hover:text-[#2E2A5C]"
+                      className="text-xs font-medium text-[#2E2A5C] hover:underline"
                       aria-label="Copy account number"
                     >
-                      <Copy size={14} />
+                      {copied ? "Copied" : "Copy"}
                     </button>
-                    {copied ? (
-                      <span className="text-xs text-emerald-600">Copied</span>
-                    ) : null}
                   </dd>
                 </div>
                 <Row label="Bank Name" value={bank.bankName} />
@@ -507,8 +571,12 @@ export default function ClientFormPage() {
                   label=""
                   file={paymentProof}
                   inputRef={proofInputRef}
-                  onPick={setPaymentProof}
+                  onPick={(file) => {
+                    setError("");
+                    setPaymentProof(file);
+                  }}
                   onClear={() => setPaymentProof(null)}
+                  onError={setError}
                   required
                 />
               </div>
@@ -529,31 +597,38 @@ export default function ClientFormPage() {
               </button>
             </div>
           </div>
-        ) : (
+        ) : step === "success" ? (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-5 bg-[#2E2A5C]/20">
             <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 sm:p-10 relative text-center">
               <button
                 type="button"
-                onClick={() => setStep("done")}
+                onClick={() => setStep("complete")}
                 className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-700"
                 aria-label="Close"
               >
-                <X size={18} />
+                <CloseIcon size={18} />
               </button>
-              <div className="mx-auto mb-6 w-16 h-16 rounded-full bg-[#2E2A5C] flex items-center justify-center ring-4 ring-[#2E2A5C]/15">
-                <Check size={28} className="text-white" strokeWidth={3} />
+              <div className="mx-auto mb-6 flex justify-center">
+                <CongratulationIcon size={88} />
               </div>
               <h2 className="text-xl font-semibold text-gray-900 mb-3">
                 Payment Submitted
               </h2>
-              <p className="text-sm text-gray-500 leading-relaxed">
+              <p className="text-sm text-gray-500 leading-relaxed mb-6">
                 We&apos;ve received your payment confirmation. Your payment has
                 been submitted and is awaiting verification by NetanTech. A
                 receipt will be sent to you via email.
               </p>
+              <button
+                type="button"
+                onClick={() => setStep("complete")}
+                className="w-full py-3.5 rounded-xl bg-[#2E2A5C] text-white text-sm font-medium hover:bg-[#25214a]"
+              >
+                Done
+              </button>
             </div>
           </div>
-        )}
+        ) : null}
       </main>
     </div>
   );
@@ -574,12 +649,17 @@ function Field({
   required?: boolean;
   type?: string;
 }) {
+  const id = label.toLowerCase().replace(/\s+/g, "-");
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-600 mb-2">
+      <label
+        htmlFor={id}
+        className="block text-sm font-medium text-gray-600 mb-2"
+      >
         {label}
       </label>
       <input
+        id={id}
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -606,6 +686,7 @@ function FileDrop({
   inputRef,
   onPick,
   onClear,
+  onError,
   required,
 }: {
   label: string;
@@ -613,23 +694,31 @@ function FileDrop({
   inputRef: React.RefObject<HTMLInputElement | null>;
   onPick: (file: File) => void;
   onClear: () => void;
+  onError?: (message: string) => void;
   required?: boolean;
 }) {
   const onFile = (picked: File | null | undefined) => {
     if (!picked) return;
-    if (!["image/png", "image/jpeg", "image/jpg", "image/webp"].includes(picked.type)) {
+    if (
+      !["image/png", "image/jpeg", "image/jpg", "image/webp"].includes(
+        picked.type,
+      )
+    ) {
+      onError?.("Uploads must be PNG or JPG (max 5MB).");
       return;
     }
-    if (picked.size > 5 * 1024 * 1024) return;
+    if (picked.size > 5 * 1024 * 1024) {
+      onError?.("Each upload must be 5MB or smaller.");
+      return;
+    }
+    onError?.("");
     onPick(picked);
   };
 
   return (
     <div>
       {label ? (
-        <label className="block text-sm font-medium text-gray-600 mb-2">
-          {label}
-        </label>
+        <p className="block text-sm font-medium text-gray-600 mb-2">{label}</p>
       ) : null}
       <input
         ref={inputRef}
@@ -639,17 +728,24 @@ function FileDrop({
         required={required && !file}
         onChange={(e) => onFile(e.target.files?.[0])}
       />
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         onClick={() => inputRef.current?.click()}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            inputRef.current?.click();
+          }
+        }}
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => {
           e.preventDefault();
           onFile(e.dataTransfer.files?.[0]);
         }}
-        className="w-full rounded-xl border border-dashed border-gray-300 bg-gray-50/60 px-4 py-10 text-center hover:bg-gray-50"
+        className="w-full rounded-xl border border-dashed border-gray-300 bg-gray-50/60 px-4 py-10 text-center hover:bg-gray-50 cursor-pointer"
       >
-        <CloudUpload className="mx-auto text-gray-400 mb-3" size={28} />
+        <UploadIcon size={28} className="mx-auto mb-3 opacity-60" />
         {file ? (
           <div className="space-y-2">
             <p className="text-sm text-gray-800 font-medium truncate px-4">
@@ -675,7 +771,7 @@ function FileDrop({
             <p className="text-xs text-gray-400 mt-1">PNG, JPG (max. 5mb)</p>
           </>
         )}
-      </button>
+      </div>
     </div>
   );
 }

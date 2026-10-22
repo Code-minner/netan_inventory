@@ -2,12 +2,12 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  Search,
   SlidersHorizontal,
   ArrowUpDown,
   MoreVertical,
   Check,
 } from "lucide-react";
+import { SearchIcon } from "@/public/svg/svg";
 import ClientDetailsModal from "./ClientDetailsModal";
 import { apiFetch } from "@/src/lib/api";
 import type { Client, ClientStatus, FormStatus } from "@/src/lib/types";
@@ -170,10 +170,9 @@ export default function ClientsTable({ refreshKey = 0 }: Props) {
     <div className="bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-gray-100 p-7 sm:p-10 min-h-[480px]">
       <div className="flex flex-wrap items-center gap-3 pb-8">
         <div className="relative w-full sm:w-64">
-          <Search
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
-            size={16}
-          />
+          <span className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-gray-400">
+            <SearchIcon size={16} />
+          </span>
           <input
             value={search}
             onChange={(e) => {
