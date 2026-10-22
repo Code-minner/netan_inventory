@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import AttachmentPreview from "@/src/components/AttachmentPreview";
 import Modal from "@/src/components/Modal";
 import type { Client } from "@/src/lib/types";
 
@@ -102,24 +103,16 @@ export default function ClientDetailsModal({ client, onClose }: Props) {
             />
           ) : null}
           {client.projectDocumentUrl ? (
-            <a
-              href={client.projectDocumentUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="block text-sm font-medium text-[#2E2A5C] hover:underline"
-            >
-              View project document
-            </a>
+            <AttachmentPreview
+              label="Project document"
+              url={client.projectDocumentUrl}
+            />
           ) : null}
           {client.paymentProofUrl ? (
-            <a
-              href={client.paymentProofUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="block text-sm font-medium text-[#2E2A5C] hover:underline"
-            >
-              View payment proof
-            </a>
+            <AttachmentPreview
+              label="Payment proof"
+              url={client.paymentProofUrl}
+            />
           ) : null}
 
           <div className="rounded-lg border border-dashed border-gray-200 px-4 py-3.5">

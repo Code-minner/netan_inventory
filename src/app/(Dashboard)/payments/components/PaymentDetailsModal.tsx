@@ -1,5 +1,6 @@
 "use client";
 
+import AttachmentPreview from "@/src/components/AttachmentPreview";
 import Modal from "@/src/components/Modal";
 import type { Payment } from "@/src/lib/types";
 
@@ -51,14 +52,10 @@ export default function PaymentDetailsModal({ payment, onClose }: Props) {
             ) : null}
           </div>
           {payment.paymentProofUrl ? (
-            <a
-              href={payment.paymentProofUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="block text-sm font-medium text-[#2E2A5C] hover:underline"
-            >
-              View payment proof
-            </a>
+            <AttachmentPreview
+              label="Payment proof / receipt"
+              url={payment.paymentProofUrl}
+            />
           ) : null}
         </div>
       ) : null}
