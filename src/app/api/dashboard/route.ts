@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { handleRouteError, requireAdmin } from "@/src/lib/auth";
 import { parseAmount } from "@/src/lib/format";
+import { SERVICE_OVERVIEW_BUCKETS } from "@/src/lib/services-catalog";
 import {
   listClients,
   listNotifications,
@@ -28,11 +29,39 @@ export async function GET() {
       0,
     );
 
-    const serviceCounts = new Map<string, number>();
-    for (const client of clients) {
-      const key = client.serviceType || "Unspecified";
-      serviceCounts.set(key, (serviceCounts.get(key) || 0) + 1);
-    }
+    const bucketCounts = SERVICE_OVERVIEW_BUCKETS.map((bucket) => {
+      const idSet = new Set<string>(bucket.catalogIds);
+      let count = 0;
+      for (const client of clients) {
+        const selected = client.selectedServices || [];
+        if (selected.length > 0) {
+          count += selected.filter((service) => idSet.has(service.id)).length;
+          continue;
+        }
+        const type = (client.serviceType || "").toLowerCase();
+        if (!type) continue;
+        if (
+          bucket.title === "Design & Branding" &&
+          (type.includes("brand") || type.includes("seo") || type.includes("marketing"))
+        ) {
+          count += 1;
+        } else if (
+          bucket.title === "UI/UX Design" &&
+          (type.includes("ui") || type.includes("ux"))
+        ) {
+          count += 1;
+        } else if (
+          bucket.title === "Web Development" &&
+          (type.includes("web") ||
+            type.includes("website") ||
+            type.includes("cloud") ||
+            type.includes("mobile"))
+        ) {
+          count += 1;
+        }
+      }
+      return { title: bucket.title, count };
+    });
 
     return NextResponse.json({
       stats: {
@@ -44,10 +73,7 @@ export async function GET() {
       recentClients: clients.slice(0, 5),
       recentPayments: payments.slice(0, 5),
       recentActivities: notifications.slice(0, 6),
-      services: [...serviceCounts.entries()]
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 3)
-        .map(([title, count]) => ({ title, count })),
+      services: bucketCounts,
     });
   } catch (err) {
     return handleRouteError(err);

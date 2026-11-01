@@ -1,68 +1,77 @@
 "use client";
 
-interface ReportStat {
-  title: string;
-  value: number;
-  change: string;
-  isPositive: boolean;
-}
+import { ArrowUpIcon, ArrowDownIcon } from "@/public/svg/svg";
+import { formatNaira } from "@/src/lib/format";
 
-function StatCard({ title, value, change, isPositive }: ReportStat) {
+type StatCardProps = {
+  title: string;
+  value: string;
+  change: number;
+};
+
+function StatCard({ title, value, change }: StatCardProps) {
+  const isPositive = change >= 0;
   return (
-    <div className="bg-white rounded-lg border border-gray-100 px-6 py-6 flex-1">
+    <div className="bg-white rounded-xl border border-gray-100 p-5 sm:p-6">
       <p className="text-sm text-gray-400 mb-3">{title}</p>
-      <p className="text-2xl font-semibold text-gray-900 mb-3">{value}</p>
-      <div className="flex items-center gap-1 text-xs">
-        <span className={isPositive ? "text-green-600" : "text-red-500"}>
-          {change}
+      <p className="text-2xl font-semibold text-gray-900 tracking-tight">
+        {value}
+      </p>
+      <p
+        className={`mt-3 flex items-center gap-1 text-xs font-medium ${
+          isPositive ? "text-emerald-600" : "text-red-500"
+        }`}
+      >
+        {isPositive ? (
+          <ArrowUpIcon size={14} className="shrink-0" />
+        ) : (
+          <ArrowDownIcon size={14} className="shrink-0" />
+        )}
+        <span>
+          {Math.abs(change)}% vs last month
         </span>
-        <span className="text-gray-400">vs last month</span>
-      </div>
+      </p>
     </div>
   );
 }
 
 type Props = {
   stats?: {
-    totalClients: number;
-    newClients: number;
-    activeClients: number;
-    inactiveClients: number;
+    totalRevenue: number;
+    payments: number;
+    outstanding: number;
+    clients: number;
     change: number;
   };
 };
 
 export default function ReportStatCards({ stats }: Props) {
-  const changeLabel = `${stats && stats.change > 0 ? "+" : ""}${stats?.change ?? 0}%`;
-  const cards: ReportStat[] = [
+  const change = stats?.change ?? 0;
+  const cards: StatCardProps[] = [
     {
-      title: "Total Clients",
-      value: stats?.totalClients ?? 0,
-      change: changeLabel,
-      isPositive: (stats?.change ?? 0) >= 0,
+      title: "Total Revenue",
+      value: formatNaira(stats?.totalRevenue ?? 0),
+      change,
     },
     {
-      title: "New Clients",
-      value: stats?.newClients ?? 0,
-      change: changeLabel,
-      isPositive: (stats?.change ?? 0) >= 0,
+      title: "Payments",
+      value: String(stats?.payments ?? 0),
+      change,
     },
     {
-      title: "Active Clients",
-      value: stats?.activeClients ?? 0,
-      change: changeLabel,
-      isPositive: true,
+      title: "Outstanding",
+      value: formatNaira(stats?.outstanding ?? 0),
+      change,
     },
     {
-      title: "Inactive Clients",
-      value: stats?.inactiveClients ?? 0,
-      change: changeLabel,
-      isPositive: false,
+      title: "Clients",
+      value: String(stats?.clients ?? 0),
+      change,
     },
   ];
 
   return (
-    <div className="flex gap-2 sm:gap-2 flex-wrap">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
       {cards.map((stat) => (
         <StatCard key={stat.title} {...stat} />
       ))}

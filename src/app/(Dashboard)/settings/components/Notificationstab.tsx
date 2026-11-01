@@ -60,9 +60,9 @@ export default function NotificationsTab() {
   };
 
   return (
-    <div className="max-w-md">
-      <h2 className="text-base font-semibold text-gray-900 mb-5">
-        Notifications
+    <div className="w-full max-w-md">
+      <h2 className="text-base font-semibold text-gray-900 mb-8">
+        Notification
       </h2>
       <ul className="space-y-4">
         {ITEMS.map(({ key, label }) => (

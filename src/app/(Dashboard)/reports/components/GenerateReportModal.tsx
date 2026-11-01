@@ -1,17 +1,31 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Modal from "@/src/components/Modal";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  initialReportType?: string;
+  initialDateRange?: string;
 };
 
-export default function GenerateReportModal({ isOpen, onClose }: Props) {
-  const [reportType, setReportType] = useState("Client Report");
-  const [dateRange, setDateRange] = useState("Last 30 days");
+export default function GenerateReportModal({
+  isOpen,
+  onClose,
+  initialReportType = "Client Report",
+  initialDateRange = "Last 30 days",
+}: Props) {
+  const [reportType, setReportType] = useState(initialReportType);
+  const [dateRange, setDateRange] = useState(initialDateRange);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setReportType(initialReportType);
+    setDateRange(initialDateRange);
+    setError("");
+  }, [isOpen, initialReportType, initialDateRange]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

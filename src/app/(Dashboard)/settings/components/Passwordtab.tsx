@@ -1,26 +1,8 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { EyesIcon, EyeSlashIcon } from "@/public/svg/svg";
 import { apiFetch } from "@/src/lib/api";
-
-function EyeIcon({ off }: { off: boolean }) {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" />
-      <circle cx="12" cy="12" r="3" />
-      {off && <path d="M3 3l18 18" />}
-    </svg>
-  );
-}
 
 function PasswordField({
   id,
@@ -49,7 +31,7 @@ function PasswordField({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           required
-          className="w-full pl-3 pr-10 py-2.5 text-sm border border-gray-200 rounded-lg placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2D266C]/20 focus:border-[#2D266C]/40"
+          className="w-full pl-4 pr-11 py-3 text-sm border border-gray-200 rounded-lg placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-[#2D266C]/20 focus:border-[#2D266C]/40"
         />
         <button
           type="button"
@@ -57,7 +39,7 @@ function PasswordField({
           aria-label={visible ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`}
           className="absolute inset-y-0 right-0 px-3 text-gray-400 hover:text-gray-600"
         >
-          <EyeIcon off={!visible} />
+          {visible ? <EyesIcon size={18} /> : <EyeSlashIcon size={18} />}
         </button>
       </div>
     </div>
@@ -102,8 +84,8 @@ export default function PasswordTab() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md">
-      <h2 className="text-base font-semibold text-gray-900 mb-5">
+    <form onSubmit={handleSubmit} className="w-full max-w-md">
+      <h2 className="text-base font-semibold text-gray-900 mb-8">
         Change password
       </h2>
 
@@ -145,7 +127,7 @@ export default function PasswordTab() {
       <button
         type="submit"
         disabled={saving}
-        className="text-sm font-medium text-white bg-[#2D266C] hover:bg-[#241f58] rounded-lg px-4 py-2.5 disabled:opacity-60"
+        className="text-sm font-medium text-white bg-[#2E2A5C] hover:bg-[#25214a] rounded-lg px-5 py-3 disabled:opacity-60"
       >
         {saving ? "Saving…" : "Save changes"}
       </button>

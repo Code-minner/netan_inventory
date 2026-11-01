@@ -17,10 +17,10 @@ export default function SettingsForm() {
   const [active, setActive] = useState<TabId>("profile");
 
   return (
-    <div className="bg-white rounded-lg border border-gray-100 p-7 md:p-10 min-h-[480px] flex flex-col md:flex-row gap-8 md:gap-12">
+    <div className="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8 lg:p-10 min-h-[560px] flex flex-col md:flex-row gap-8 md:gap-12 lg:gap-16">
       <nav
         aria-label="Settings sections"
-        className="flex md:flex-col gap-1.5 md:w-56 shrink-0 overflow-x-auto"
+        className="flex md:flex-col gap-1 md:w-44 shrink-0 overflow-x-auto"
       >
         {TABS.map((tab) => {
           const isActive = tab.id === active;
@@ -42,7 +42,7 @@ export default function SettingsForm() {
         })}
       </nav>
 
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 max-w-2xl">
         {active === "profile" && <ProfileTab />}
         {active === "password" && <PasswordTab />}
         {active === "notifications" && <NotificationsTab />}

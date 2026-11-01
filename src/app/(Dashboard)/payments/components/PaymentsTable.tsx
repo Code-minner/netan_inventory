@@ -3,11 +3,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   SlidersHorizontal,
-  ArrowUpDown,
   MoreVertical,
   Check,
 } from "lucide-react";
-import { SearchIcon } from "@/public/svg/svg";
+import { SearchIcon, SortIcon } from "@/public/svg/svg";
 import PaymentDetailsModal from "./PaymentDetailsModal";
 import { apiFetch } from "@/src/lib/api";
 import type { Payment, PaymentStatus } from "@/src/lib/types";
@@ -243,7 +242,7 @@ export default function PaymentsTable({ refreshKey = 0 }: Props) {
             }}
             className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50"
           >
-            <ArrowUpDown size={15} />
+            <SortIcon size={15} />
             {sortKey === "newest" ? "Sort by" : sortLabel}
           </button>
           <DropdownMenu

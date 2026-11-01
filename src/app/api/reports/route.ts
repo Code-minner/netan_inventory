@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { handleRouteError, requireAdmin } from "@/src/lib/auth";
-import { listClients } from "@/src/lib/store";
+import { parseAmount } from "@/src/lib/format";
+import { listClients, listPayments } from "@/src/lib/store";
 
 const MONTHS = [
   "JAN",
@@ -17,59 +18,98 @@ const MONTHS = [
   "DEC",
 ];
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     await requireAdmin();
-    const clients = await listClients();
+    const yearParam = Number(request.nextUrl.searchParams.get("year"));
     const now = new Date();
-    const year = now.getFullYear();
+    const year = Number.isFinite(yearParam) && yearParam > 2000
+      ? yearParam
+      : now.getFullYear();
     const thisMonth = now.getMonth();
-    const lastMonthDate = new Date(year, thisMonth - 1, 1);
+    const lastMonthDate = new Date(now.getFullYear(), thisMonth - 1, 1);
 
-    const createdThisMonth = clients.filter((client) => {
-      const created = new Date(client.createdAt);
-      return (
-        created.getFullYear() === year && created.getMonth() === thisMonth
-      );
-    }).length;
-    const createdLastMonth = clients.filter((client) => {
-      const created = new Date(client.createdAt);
-      return (
-        created.getFullYear() === lastMonthDate.getFullYear() &&
-        created.getMonth() === lastMonthDate.getMonth()
-      );
-    }).length;
+    const [clients, payments] = await Promise.all([
+      listClients(),
+      listPayments(),
+    ]);
 
-    const ongoing = clients.filter((client) => client.status === "Ongoing")
-      .length;
-    const ended = clients.length - ongoing;
+    const totalRevenue = payments.reduce(
+      (sum, payment) => sum + parseAmount(payment.paidAmount),
+      0,
+    );
+    const outstandingAmount = payments.reduce((sum, payment) => {
+      const due = parseAmount(payment.amount) - parseAmount(payment.paidAmount);
+      return sum + Math.max(0, due);
+    }, 0);
+
+    const paidCount = payments.filter((p) => p.status === "Completed").length;
+    const outstandingCount = payments.filter(
+      (p) => p.status !== "Completed",
+    ).length;
+
+    const revenueThisMonth = payments
+      .filter((payment) => {
+        const created = new Date(payment.createdAt);
+        return (
+          created.getFullYear() === now.getFullYear() &&
+          created.getMonth() === thisMonth
+        );
+      })
+      .reduce((sum, payment) => sum + parseAmount(payment.paidAmount), 0);
+
+    const revenueLastMonth = payments
+      .filter((payment) => {
+        const created = new Date(payment.createdAt);
+        return (
+          created.getFullYear() === lastMonthDate.getFullYear() &&
+          created.getMonth() === lastMonthDate.getMonth()
+        );
+      })
+      .reduce((sum, payment) => sum + parseAmount(payment.paidAmount), 0);
+
     const change =
-      createdLastMonth === 0
-        ? createdThisMonth > 0
+      revenueLastMonth === 0
+        ? revenueThisMonth > 0
           ? 100
           : 0
         : Math.round(
-            ((createdThisMonth - createdLastMonth) / createdLastMonth) * 100,
+            ((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100,
           );
 
-    const growth = MONTHS.map((month, index) => ({
+    const revenue = MONTHS.map((month, index) => ({
       month,
-      clients: clients.filter((client) => {
-        const created = new Date(client.createdAt);
-        return created.getFullYear() === year && created.getMonth() === index;
-      }).length,
+      revenue: payments
+        .filter((payment) => {
+          const created = new Date(payment.createdAt);
+          return (
+            created.getFullYear() === year && created.getMonth() === index
+          );
+        })
+        .reduce((sum, payment) => sum + parseAmount(payment.paidAmount), 0),
     }));
+
+    const years = new Set<number>([year, now.getFullYear()]);
+    for (const payment of payments) {
+      const y = new Date(payment.createdAt).getFullYear();
+      if (Number.isFinite(y)) years.add(y);
+    }
 
     return NextResponse.json({
       year,
+      years: [...years].sort((a, b) => b - a),
       stats: {
-        totalClients: clients.length,
-        newClients: createdThisMonth,
-        activeClients: ongoing,
-        inactiveClients: ended,
+        totalRevenue,
+        payments: payments.length,
+        outstanding: outstandingAmount,
+        clients: clients.length,
         change,
       },
-      growth,
+      revenue,
+      paymentStatus: {
+        paid: paidCount,
+        outstanding: outstandingCount,
+      },
     });
   } catch (err) {
     return handleRouteError(err);

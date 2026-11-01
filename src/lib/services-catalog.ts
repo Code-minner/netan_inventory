@@ -14,6 +14,22 @@ export const SERVICE_CATALOG: CatalogService[] = [
   { id: "seo", title: "SEO & Digital Marketing", price: 400_000 },
 ];
 
+/** Fixed home dashboard Service Overview cards (matches product UI). */
+export const SERVICE_OVERVIEW_BUCKETS = [
+  {
+    title: "Design & Branding",
+    catalogIds: ["brand", "seo"] as const,
+  },
+  {
+    title: "UI/UX Design",
+    catalogIds: ["uiux"] as const,
+  },
+  {
+    title: "Web Development",
+    catalogIds: ["web", "cloud", "mobile"] as const,
+  },
+] as const;
+
 export type PaymentPercent = 50 | 80 | 100;
 
 export function getServicesByIds(ids: string[]) {

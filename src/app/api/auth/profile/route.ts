@@ -20,6 +20,10 @@ export async function PATCH(request: Request) {
       patch.name = name;
       patch.initials = makeInitials(name);
     }
+    if (body.avatarUrl !== undefined) {
+      const avatarUrl = String(body.avatarUrl || "").trim();
+      patch.avatarUrl = avatarUrl || undefined;
+    }
     if (typeof body.notifyClient === "boolean") {
       patch.notifyClient = body.notifyClient;
     }
