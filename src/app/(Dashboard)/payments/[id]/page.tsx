@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRightIcon, BackArrow } from "@/public/svg/svg";
+import { ArrowRightIcon, BackArrow, EditIcon } from "@/public/svg/svg";
 import { apiFetch } from "@/src/lib/api";
 import { formatDate, formatTime } from "@/src/lib/format";
 import type { Client, Payment } from "@/src/lib/types";
@@ -67,15 +67,15 @@ export default function PaymentDetailsPage() {
 
   if (loading) {
     return (
-      <p className="text-sm text-gray-400 py-16 text-center">
-        Loading payment…
-      </p>
+      <div className="bg-white rounded-2xl border border-gray-100 min-h-[calc(100dvh-11rem)] flex items-center justify-center">
+        <p className="text-sm text-gray-400">Loading payment…</p>
+      </div>
     );
   }
 
   if (error || !payment) {
     return (
-      <div className="space-y-4 py-10 text-center">
+      <div className="bg-white rounded-2xl border border-gray-100 min-h-[calc(100dvh-11rem)] flex flex-col items-center justify-center gap-3 px-6">
         <p className="text-sm text-red-500">{error || "Payment not found"}</p>
         <button
           type="button"
@@ -88,124 +88,117 @@ export default function PaymentDetailsPage() {
     );
   }
 
-  const since = client ? formatDate(client.createdAt) : formatDate(payment.createdAt);
+  const since = client
+    ? formatDate(client.createdAt)
+    : formatDate(payment.createdAt);
   const dateTime = `${formatDate(payment.createdAt)} - ${formatTime(payment.createdAt)}`;
   const completed = payment.status === "Completed";
 
   return (
-    <div className="max-w-4xl">
-      <div className="bg-white rounded-2xl border border-gray-100 px-6 sm:px-8 py-7 sm:py-8 space-y-8">
-        <button
-          type="button"
-          onClick={() => router.push("/payments")}
-          className="inline-flex items-center text-gray-500 hover:text-gray-800"
-          aria-label="Back to payments"
-        >
-          <BackArrow size={20} />
-        </button>
+    <div className="bg-white rounded-2xl border border-gray-100 w-full min-h-[calc(100dvh-11rem)] px-6 sm:px-8 lg:px-10 py-7 sm:py-8">
+      <button
+        type="button"
+        onClick={() => router.push("/payments")}
+        className="inline-flex items-center text-gray-500 hover:text-gray-800 mb-6"
+        aria-label="Back to payments"
+      >
+        <BackArrow size={20} />
+      </button>
 
-        <div className="flex flex-wrap items-start justify-between gap-4 pb-2 border-b border-gray-100">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight">
-              {payment.paidAmount || payment.amount}
-            </h1>
-            <p className="text-sm text-gray-400 mt-2">
+      <div className="flex flex-wrap items-end justify-between gap-4 pb-8 border-b border-gray-100">
+        <div>
+          <h1 className="text-2xl sm:text-[32px] font-semibold text-gray-900 tracking-tight">
+            {payment.paidAmount || payment.amount}
+          </h1>
+          <div className="flex flex-wrap items-center gap-3 mt-2">
+            <p className="text-sm text-gray-400">
               {payment.servicesCount}{" "}
               {payment.servicesCount === 1 ? "Service" : "Services"} — Client
               since {since}
             </p>
+            <span
+              className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                completed
+                  ? "bg-green-50 text-green-600"
+                  : "bg-red-50 text-red-500"
+              }`}
+            >
+              {completed ? "Completed" : "Not completed"}
+            </span>
           </div>
-          <span
-            className={`inline-block px-3 py-1.5 rounded-full text-xs font-medium ${
-              completed
-                ? "bg-green-50 text-green-600"
-                : "bg-red-50 text-red-500"
-            }`}
-          >
-            {completed ? "Completed" : "Not completed"}
+        </div>
+      </div>
+
+      <section className="py-8 border-b border-gray-100">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-sm font-semibold text-gray-900">Client Info</h2>
+          <span className="text-gray-400" aria-hidden>
+            <EditIcon size={18} />
           </span>
         </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm">
+          <Info label="Client Name" value={client?.name || payment.name} />
+          <Info label="Email Address" value={client?.email || "—"} />
+          <Info label="Phone Number" value={client?.phone || "—"} />
+        </div>
+      </section>
 
-        <section>
-          <h2 className="text-sm font-semibold text-gray-900 mb-5">
-            Client Info
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm">
-            <Info
-              label="Client Name"
-              value={client?.name || payment.name}
-            />
-            <Info
-              label="Email Address"
-              value={client?.email || "—"}
-            />
-            <Info
-              label="Phone Number"
-              value={client?.phone || "—"}
-            />
-          </div>
-        </section>
-
-        <section className="border-t border-gray-100 pt-8">
-          <h2 className="text-sm font-semibold text-gray-900 mb-5">
-            Payment Details
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-6 text-sm">
-            <Info
-              label={`Service (${payment.servicesCount})`}
-              value={serviceLabel}
-            />
-            <Info label="Payment Method" value="Bank Transfer" />
-            <div>
-              <p className="text-xs text-gray-400 mb-1.5">Status</p>
-              <span
-                className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                  completed
-                    ? "bg-green-50 text-green-600"
-                    : "bg-red-50 text-red-500"
-                }`}
-              >
-                {completed ? "Completed" : "Not completed"}
-              </span>
-            </div>
-            <Info label="Amount" value={payment.amount} />
-            <Info label="Paid" value={payment.paidAmount} />
-            <Info label="Date & Time" value={dateTime} />
-            {payment.paymentPercent ? (
-              <Info label="Percent" value={`${payment.paymentPercent}%`} />
-            ) : null}
-          </div>
-        </section>
-
-        <section className="border-t border-gray-100 pt-8">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">
-            Payment proof
-          </h2>
-          {payment.paymentProofUrl ? (
-            <a
-              href={payment.paymentProofUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center justify-between gap-3 border border-gray-100 rounded-xl px-4 py-3.5 hover:border-gray-200"
+      <section className="py-8 border-b border-gray-100">
+        <h2 className="text-sm font-semibold text-gray-900 mb-5">
+          Payment Details
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-6 text-sm">
+          <Info
+            label={`Service (${payment.servicesCount})`}
+            value={serviceLabel}
+          />
+          <Info label="Payment Method" value="Bank Transfer" />
+          <div>
+            <p className="text-xs text-gray-400 mb-1.5">Status</p>
+            <span
+              className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                completed
+                  ? "bg-green-50 text-green-600"
+                  : "bg-red-50 text-red-500"
+              }`}
             >
-              <div className="min-w-0">
-                <p className="text-sm font-medium text-gray-800 truncate">
-                  {fileNameFromUrl(payment.paymentProofUrl)}
-                </p>
-                <p className="text-xs text-gray-400 mt-0.5">
-                  Uploaded — {formatDate(payment.createdAt)}
-                </p>
-              </div>
-              <ArrowRightIcon size={16} className="text-gray-400 shrink-0" />
-            </a>
-          ) : (
-            <p className="text-sm text-gray-400">No payment proof uploaded.</p>
-          )}
-        </section>
+              {completed ? "Completed" : "Not completed"}
+            </span>
+          </div>
+          <Info label="Amount" value={payment.amount} />
+          <Info label="Paid" value={payment.paidAmount} />
+          <Info label="Date & Time" value={dateTime} />
+        </div>
+      </section>
+
+      <section className="pt-8">
+        <h2 className="text-sm font-semibold text-gray-900 mb-4">
+          Payment proof
+        </h2>
+        {payment.paymentProofUrl ? (
+          <a
+            href={payment.paymentProofUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center justify-between gap-3 border border-gray-100 rounded-xl px-4 py-3.5 hover:border-gray-200 max-w-xl"
+          >
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-gray-800 truncate">
+                {fileNameFromUrl(payment.paymentProofUrl)}
+              </p>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Uploaded — {formatDate(payment.createdAt)}
+              </p>
+            </div>
+            <ArrowRightIcon size={16} className="text-gray-400 shrink-0" />
+          </a>
+        ) : (
+          <p className="text-sm text-gray-400">No payment proof uploaded.</p>
+        )}
 
         {client ? (
-          <p className="text-xs text-gray-400">
-            View full client profile:{" "}
+          <p className="text-xs text-gray-400 mt-8">
+            Client profile:{" "}
             <Link
               href={`/clients/${client.id}`}
               className="text-[#2E2A5C] font-medium hover:underline"
@@ -214,7 +207,7 @@ export default function PaymentDetailsPage() {
             </Link>
           </p>
         ) : null}
-      </div>
+      </section>
     </div>
   );
 }

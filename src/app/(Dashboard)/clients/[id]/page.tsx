@@ -5,10 +5,11 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { MoreVertical } from "lucide-react";
 import { BackArrow, EditIcon, PlusIcon } from "@/public/svg/svg";
+import { useSetPageBreadcrumb } from "@/src/components/PageHeadingContext";
+import { useAuth } from "@/src/components/AuthProvider";
 import { apiFetch } from "@/src/lib/api";
 import { formatDate } from "@/src/lib/format";
 import type { Client, Payment } from "@/src/lib/types";
-import { useAuth } from "@/src/components/AuthProvider";
 
 function fileNameFromUrl(url: string) {
   try {
@@ -27,6 +28,16 @@ export default function ClientDetailsPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  useSetPageBreadcrumb(
+    client
+      ? {
+          parentLabel: "Clients",
+          parentHref: "/clients",
+          current: client.name,
+        }
+      : null,
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -87,15 +98,15 @@ export default function ClientDetailsPage() {
 
   if (loading) {
     return (
-      <p className="text-sm text-gray-400 py-16 text-center">
-        Loading client…
-      </p>
+      <div className="bg-white rounded-2xl border border-gray-100 min-h-[calc(100dvh-11rem)] flex items-center justify-center">
+        <p className="text-sm text-gray-400">Loading client…</p>
+      </div>
     );
   }
 
   if (error || !client) {
     return (
-      <div className="space-y-4 py-10 text-center">
+      <div className="bg-white rounded-2xl border border-gray-100 min-h-[calc(100dvh-11rem)] flex flex-col items-center justify-center gap-3 px-6">
         <p className="text-sm text-red-500">{error || "Client not found"}</p>
         <button
           type="button"
@@ -116,54 +127,44 @@ export default function ClientDetailsPage() {
     "No description provided yet.";
 
   return (
-    <div className="space-y-4 max-w-5xl">
-      <p className="text-sm text-gray-400">
-        <Link href="/clients" className="hover:text-gray-600">
-          Clients
-        </Link>
-        <span className="mx-1.5">/</span>
-        <span className="text-gray-800 font-medium">{client.name}</span>
-      </p>
-
+    <div className="bg-white rounded-2xl border border-gray-100 w-full min-h-[calc(100dvh-11rem)] px-6 sm:px-8 lg:px-10 py-7 sm:py-8">
       <button
         type="button"
         onClick={() => router.push("/clients")}
-        className="inline-flex items-center text-gray-500 hover:text-gray-800"
+        className="inline-flex items-center text-gray-500 hover:text-gray-800 mb-6"
         aria-label="Back to clients"
       >
         <BackArrow size={20} />
       </button>
 
-      <section className="bg-white rounded-2xl border border-gray-100 px-6 sm:px-8 py-6">
-        <div className="flex items-start gap-4">
-          <span className="w-14 h-14 rounded-full bg-orange-50 text-orange-400 flex items-center justify-center text-sm font-semibold shrink-0">
-            {client.initials}
-          </span>
-          <div className="min-w-0 pt-0.5">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <h1 className="text-xl font-semibold text-gray-900 truncate">
-                {client.name}
-              </h1>
-              <span
-                className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                  client.status === "Ended"
-                    ? "bg-green-50 text-green-600"
-                    : "bg-amber-50 text-amber-600"
-                }`}
-              >
-                {client.status}
-              </span>
-            </div>
-            <p className="text-sm text-gray-400 mt-1">
-              {client.servicesCount}{" "}
-              {client.servicesCount === 1 ? "Service" : "Services"} — Client
-              since {since}
-            </p>
+      <div className="flex items-start gap-4 pb-8 border-b border-gray-100">
+        <span className="w-14 h-14 rounded-full bg-orange-50 text-orange-400 flex items-center justify-center text-sm font-semibold shrink-0">
+          {client.initials}
+        </span>
+        <div className="min-w-0 pt-0.5">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h1 className="text-xl font-semibold text-gray-900 truncate">
+              {client.name}
+            </h1>
+            <span
+              className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                client.status === "Ended"
+                  ? "bg-green-50 text-green-600"
+                  : "bg-amber-50 text-amber-600"
+              }`}
+            >
+              {client.status}
+            </span>
           </div>
+          <p className="text-sm text-gray-400 mt-1">
+            {client.servicesCount}{" "}
+            {client.servicesCount === 1 ? "Service" : "Services"} — Client since{" "}
+            {since}
+          </p>
         </div>
-      </section>
+      </div>
 
-      <section className="bg-white rounded-2xl border border-gray-100 px-6 sm:px-8 py-6">
+      <section className="py-8 border-b border-gray-100">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-sm font-semibold text-gray-900">Client Info</h2>
           <span className="text-gray-400" aria-hidden>
@@ -177,7 +178,7 @@ export default function ClientDetailsPage() {
         </div>
       </section>
 
-      <section className="bg-white rounded-2xl border border-gray-100 px-6 sm:px-8 py-6">
+      <section className="py-8 border-b border-gray-100">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-sm font-semibold text-gray-900">Services</h2>
           {canWrite ? (
@@ -236,7 +237,7 @@ export default function ClientDetailsPage() {
         )}
       </section>
 
-      <section className="bg-white rounded-2xl border border-gray-100 px-6 sm:px-8 py-6">
+      <section className="py-8 border-b border-gray-100">
         <h2 className="text-sm font-semibold text-gray-900 mb-4">
           Client Description
         </h2>
@@ -245,7 +246,7 @@ export default function ClientDetailsPage() {
         </div>
       </section>
 
-      <section className="bg-white rounded-2xl border border-gray-100 px-6 sm:px-8 py-6">
+      <section className="py-8 border-b border-gray-100">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-sm font-semibold text-gray-900">Files</h2>
           {canWrite ? (
@@ -284,7 +285,7 @@ export default function ClientDetailsPage() {
         )}
       </section>
 
-      <section className="bg-white rounded-2xl border border-gray-100 px-6 sm:px-8 py-6">
+      <section className="pt-8">
         <h2 className="text-sm font-semibold text-gray-900 mb-5">
           Payment History
         </h2>

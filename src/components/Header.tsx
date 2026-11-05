@@ -1,11 +1,13 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { BellIcon, MenuIcon } from "../../public/svg/svg";
 import { useSidebar } from "./SidebarContext";
 import { useAuth } from "./AuthProvider";
+import { usePageHeading } from "./PageHeadingContext";
 import NotificationsPanel from "./NotificationsPanel";
 import { apiFetch } from "@/src/lib/api";
 import type { NotificationItem } from "@/src/lib/types";
@@ -23,6 +25,7 @@ export default function Header() {
   const pathname = usePathname();
   const { toggle } = useSidebar();
   const { admin } = useAuth();
+  const pageHeading = usePageHeading();
   const title =
     titles[pathname] ??
     (pathname.startsWith("/clients")
@@ -65,9 +68,22 @@ export default function Header() {
           <button onClick={toggle} className="lg:hidden text-black shrink-0">
             <MenuIcon size={22} />
           </button>
-          <h2 className="text-lg sm:text-xl font-semibold text-black truncate">
-            {title}
-          </h2>
+          {pageHeading?.breadcrumb ? (
+            <h2 className="text-lg sm:text-xl font-semibold text-black truncate min-w-0">
+              <Link
+                href={pageHeading.breadcrumb.parentHref}
+                className="text-gray-400 font-medium hover:text-gray-600"
+              >
+                {pageHeading.breadcrumb.parentLabel}
+              </Link>
+              <span className="text-gray-300 font-normal"> / </span>
+              <span>{pageHeading.breadcrumb.current}</span>
+            </h2>
+          ) : (
+            <h2 className="text-lg sm:text-xl font-semibold text-black truncate">
+              {title}
+            </h2>
+          )}
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
