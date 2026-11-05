@@ -23,7 +23,21 @@ export default function Header() {
   const pathname = usePathname();
   const { toggle } = useSidebar();
   const { admin } = useAuth();
-  const title = titles[pathname] ?? "";
+  const title =
+    titles[pathname] ??
+    (pathname.startsWith("/clients")
+      ? "Clients"
+      : pathname.startsWith("/payments")
+        ? "Payments"
+        : pathname.startsWith("/reports")
+          ? "Reports"
+          : pathname.startsWith("/team")
+            ? "Team"
+            : pathname.startsWith("/settings")
+              ? "Settings"
+              : pathname.startsWith("/home")
+                ? "Dashboard"
+                : "");
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const displayName = admin?.name?.trim() || admin?.email?.split("@")[0] || "Staff";

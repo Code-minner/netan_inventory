@@ -326,6 +326,20 @@ export async function listPayments() {
   return rows.map(mapPayment);
 }
 
+export async function getPaymentById(id: string) {
+  const rows = await supabaseRest<PaymentRow[]>(
+    `/payments?id=eq.${encodeURIComponent(id)}&select=*`,
+  );
+  return rows[0] ? mapPayment(rows[0]) : null;
+}
+
+export async function listPaymentsByClientId(clientId: string) {
+  const rows = await supabaseRest<PaymentRow[]>(
+    `/payments?client_id=eq.${encodeURIComponent(clientId)}&select=*&order=created_at.desc`,
+  );
+  return rows.map(mapPayment);
+}
+
 export async function insertPayment(payment: Payment) {
   const rows = await supabaseRest<PaymentRow[]>("/payments", {
     method: "POST",

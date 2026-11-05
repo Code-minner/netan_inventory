@@ -1,13 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   SlidersHorizontal,
   MoreVertical,
   Check,
 } from "lucide-react";
 import { SearchIcon, SortIcon } from "@/public/svg/svg";
-import ClientDetailsModal from "./ClientDetailsModal";
 import { apiFetch } from "@/src/lib/api";
 import type { Client, ClientStatus, FormStatus } from "@/src/lib/types";
 
@@ -92,6 +92,7 @@ type Props = {
 };
 
 export default function ClientsTable({ refreshKey = 0 }: Props) {
+  const router = useRouter();
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>("All");
@@ -101,7 +102,6 @@ export default function ClientsTable({ refreshKey = 0 }: Props) {
   const [sortOpen, setSortOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [error, setError] = useState("");
 
   const load = useCallback(async () => {
@@ -359,7 +359,7 @@ export default function ClientsTable({ refreshKey = 0 }: Props) {
               <div className="lg:w-[4%] flex justify-end">
                 <button
                   type="button"
-                  onClick={() => setSelectedClient(client)}
+                  onClick={() => router.push(`/clients/${client.id}`)}
                   className="text-gray-400 hover:text-gray-600 p-1"
                   aria-label={`View ${client.name}`}
                 >
@@ -381,11 +381,6 @@ export default function ClientsTable({ refreshKey = 0 }: Props) {
           </button>
         </div>
       )}
-
-      <ClientDetailsModal
-        client={selectedClient}
-        onClose={() => setSelectedClient(null)}
-      />
     </div>
   );
 }

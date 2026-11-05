@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { handleRouteError, requireAdmin, requireWriter } from "@/src/lib/auth";
-import { deleteClient, getClientById, updateClient } from "@/src/lib/store";
+import {
+  deleteClient,
+  getClientById,
+  listPaymentsByClientId,
+  updateClient,
+} from "@/src/lib/store";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -12,7 +17,8 @@ export async function GET(_request: Request, { params }: Params) {
     if (!client) {
       return NextResponse.json({ error: "Client not found" }, { status: 404 });
     }
-    return NextResponse.json({ client });
+    const payments = await listPaymentsByClientId(id);
+    return NextResponse.json({ client, payments });
   } catch (err) {
     return handleRouteError(err);
   }

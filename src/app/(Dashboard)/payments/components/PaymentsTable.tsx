@@ -1,13 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   SlidersHorizontal,
   MoreVertical,
   Check,
 } from "lucide-react";
 import { SearchIcon, SortIcon } from "@/public/svg/svg";
-import PaymentDetailsModal from "./PaymentDetailsModal";
 import { apiFetch } from "@/src/lib/api";
 import type { Payment, PaymentStatus } from "@/src/lib/types";
 
@@ -102,6 +102,7 @@ function DropdownMenu({ open, onClose, children, align = "left" }: MenuProps) {
 type Props = { refreshKey?: number };
 
 export default function PaymentsTable({ refreshKey = 0 }: Props) {
+  const router = useRouter();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>("All");
@@ -111,7 +112,6 @@ export default function PaymentsTable({ refreshKey = 0 }: Props) {
   const [sortOpen, setSortOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -355,7 +355,7 @@ export default function PaymentsTable({ refreshKey = 0 }: Props) {
                 <StatusBadge status={payment.status} />
                 <button
                   type="button"
-                  onClick={() => setSelectedPayment(payment)}
+                  onClick={() => router.push(`/payments/${payment.id}`)}
                   className="text-gray-400 hover:text-gray-600 md:hidden p-1"
                   aria-label={`View payment for ${payment.name}`}
                 >
@@ -366,7 +366,7 @@ export default function PaymentsTable({ refreshKey = 0 }: Props) {
               <div className="hidden md:flex md:w-[4%] justify-end">
                 <button
                   type="button"
-                  onClick={() => setSelectedPayment(payment)}
+                  onClick={() => router.push(`/payments/${payment.id}`)}
                   className="text-gray-400 hover:text-gray-600"
                   aria-label={`View payment for ${payment.name}`}
                 >
@@ -388,11 +388,6 @@ export default function PaymentsTable({ refreshKey = 0 }: Props) {
           </button>
         </div>
       )}
-
-      <PaymentDetailsModal
-        payment={selectedPayment}
-        onClose={() => setSelectedPayment(null)}
-      />
     </div>
   );
 }

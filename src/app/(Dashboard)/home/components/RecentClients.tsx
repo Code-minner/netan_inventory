@@ -21,9 +21,10 @@ export default function RecentClients({ clients }: { clients: Client[] }) {
       ) : (
         <div className="space-y-5">
           {clients.map((client) => (
-            <div
+            <Link
               key={client.id}
-              className="grid grid-cols-[1.5fr_1.5fr_1fr] items-center gap-4 py-1"
+              href={`/clients/${client.id}`}
+              className="grid grid-cols-[1.5fr_1.5fr_1fr] items-center gap-4 py-1 hover:opacity-80"
             >
               <div className="flex items-center gap-3 min-w-0">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium bg-orange-50 text-orange-400">
@@ -47,7 +48,7 @@ export default function RecentClients({ clients }: { clients: Client[] }) {
                   {client.status}
                 </span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}
