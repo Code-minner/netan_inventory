@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "./SidebarContext";
 import { useAuth } from "./AuthProvider";
+import { useBranding } from "./BrandingProvider";
 import {
   CloseIcon,
   DashboardIcon,
@@ -28,6 +28,8 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { isOpen, close } = useSidebar();
   const { logout } = useAuth();
+  const { branding } = useBranding();
+  const logoSrc = branding.navLogoUrl || "/assets/logo.png";
 
   const handleLogout = () => {
     void logout();
@@ -52,12 +54,13 @@ export default function Sidebar() {
         `}
       >
         <div className="px-6 pt-7 pb-5 flex items-center justify-between">
-          <Image
-            src="/assets/logo.png"
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={logoSrc}
             alt="Netan Logo"
             width={70}
             height={35}
-            priority
+            className="h-[35px] w-auto max-w-[140px] object-contain"
           />
           <button onClick={close} className="lg:hidden text-black">
             <CloseIcon size={20} />

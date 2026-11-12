@@ -9,7 +9,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/src/lib/api";
-import { canWrite } from "@/src/lib/roles";
+import { canWrite, isSuperadmin } from "@/src/lib/roles";
 
 export type SessionAdmin = {
   id: string;
@@ -30,6 +30,7 @@ type AuthContextValue = {
   admin: SessionAdmin | null;
   loading: boolean;
   canWrite: boolean;
+  isSuperadmin: boolean;
   refresh: () => Promise<void>;
   setAdmin: (admin: SessionAdmin | null) => void;
   logout: () => Promise<void>;
@@ -83,6 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         admin,
         loading,
         canWrite: canWrite(admin?.role || ""),
+        isSuperadmin: isSuperadmin(admin?.role || ""),
         refresh,
         setAdmin,
         logout,

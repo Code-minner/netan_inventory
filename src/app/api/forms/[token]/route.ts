@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
-import { BANK_DETAILS } from "@/src/lib/bank-details";
+import { getAppSettings } from "@/src/lib/app-settings";
 import { formatNaira } from "@/src/lib/format";
 import {
   amountForPercent,
-  getServicesByIds,
   sumServicePrices,
+  type CatalogService,
   type PaymentPercent,
-  SERVICE_CATALOG,
 } from "@/src/lib/services-catalog";
 import { isAllowedClientUploadUrl } from "@/src/lib/storage";
 import {
@@ -22,6 +21,11 @@ import {
 
 type Params = { params: Promise<{ token: string }> };
 
+function servicesByIds(catalog: CatalogService[], ids: string[]) {
+  const set = new Set(ids);
+  return catalog.filter((service) => set.has(service.id));
+}
+
 export async function GET(_request: Request, { params }: Params) {
   try {
     const { token } = await params;
@@ -33,6 +37,8 @@ export async function GET(_request: Request, { params }: Params) {
         { status: 404 },
       );
     }
+
+    const settings = await getAppSettings();
 
     return NextResponse.json({
       client: {
@@ -48,8 +54,9 @@ export async function GET(_request: Request, { params }: Params) {
         paymentPercent: client.paymentPercent || 100,
         orderTotal: client.orderTotal || "",
       },
-      catalog: SERVICE_CATALOG,
-      bank: BANK_DETAILS,
+      catalog: settings.services,
+      bank: settings.bank,
+      branding: settings.branding,
     });
   } catch (err) {
     return NextResponse.json(
@@ -135,7 +142,9 @@ export async function POST(request: Request, { params }: Params) {
       );
     }
 
-    const selectedServices = getServicesByIds(
+    const settings = await getAppSettings();
+    const selectedServices = servicesByIds(
+      settings.services,
       serviceIds.map((id: unknown) => String(id)),
     );
     if (selectedServices.length === 0) {

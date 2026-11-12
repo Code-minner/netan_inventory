@@ -186,6 +186,14 @@ export async function requireWriter() {
   return member;
 }
 
+export async function requireSuperadmin() {
+  const member = await requireAdmin();
+  if (member.role !== "Superadmin") {
+    throw new AuthError(403, "Only Superadmin can manage these settings.");
+  }
+  return member;
+}
+
 export function handleRouteError(err: unknown) {
   if (err instanceof AuthError) {
     return NextResponse.json({ error: err.message }, { status: err.status });

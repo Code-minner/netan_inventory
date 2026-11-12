@@ -32,7 +32,7 @@ function throwDbError(error: RestError | string, status: number): never {
 
   if (missingTable) {
     throw new Error(
-      "Database tables are missing. Open supabase/schema.sql, paste it into the Supabase SQL editor, and run it.",
+      "Database tables are missing. Open supabase/schema.sql (and schema-settings.sql for Superadmin settings), paste into the Supabase SQL editor, and run it.",
     );
   }
 

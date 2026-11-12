@@ -50,6 +50,10 @@ export function canWrite(role: string) {
   return role === "Superadmin" || role === "Admin";
 }
 
+export function isSuperadmin(role: string) {
+  return role === "Superadmin";
+}
+
 export function canManageTeam(role: string) {
   return role === "Superadmin" || role === "Admin";
 }

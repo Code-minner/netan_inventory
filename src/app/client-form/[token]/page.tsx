@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import {
@@ -11,13 +10,16 @@ import {
   UploadIcon,
 } from "@/public/svg/svg";
 import { apiFetch } from "@/src/lib/api";
-import { BANK_DETAILS } from "@/src/lib/bank-details";
+import {
+  DEFAULT_BANK,
+  DEFAULT_BRANDING,
+  DEFAULT_SERVICES,
+  type BrandingSettings,
+} from "@/src/lib/app-settings-shared";
 import { compressImageForUpload } from "@/src/lib/compress-image";
 import { formatNaira } from "@/src/lib/format";
 import {
   amountForPercent,
-  getServicesByIds,
-  SERVICE_CATALOG,
   sumServicePrices,
   type CatalogService,
   type PaymentPercent,
@@ -69,7 +71,8 @@ type FormClient = {
 type LoadResponse = {
   client: FormClient;
   catalog: CatalogService[];
-  bank: typeof BANK_DETAILS;
+  bank: typeof DEFAULT_BANK;
+  branding?: BrandingSettings;
 };
 
 const PERCENTS: PaymentPercent[] = [50, 80, 100];
@@ -83,8 +86,10 @@ export default function ClientFormPage() {
   const [submitting, setSubmitting] = useState(false);
   const [loadError, setLoadError] = useState("");
   const [error, setError] = useState("");
-  const [catalog, setCatalog] = useState<CatalogService[]>(SERVICE_CATALOG);
-  const [bank, setBank] = useState(BANK_DETAILS);
+  const [catalog, setCatalog] = useState<CatalogService[]>(DEFAULT_SERVICES);
+  const [bank, setBank] = useState(DEFAULT_BANK);
+  const [branding, setBranding] =
+    useState<BrandingSettings>(DEFAULT_BRANDING);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -110,8 +115,30 @@ export default function ClientFormPage() {
       try {
         const data = await apiFetch<LoadResponse>(`/api/forms/${token}`);
         if (cancelled) return;
-        setCatalog(data.catalog?.length ? data.catalog : SERVICE_CATALOG);
-        setBank(data.bank || BANK_DETAILS);
+        setCatalog(data.catalog?.length ? data.catalog : DEFAULT_SERVICES);
+        setBank(data.bank || DEFAULT_BANK);
+        if (data.branding) {
+          setBranding({
+            navLogoUrl:
+              data.branding.navLogoUrl || DEFAULT_BRANDING.navLogoUrl,
+            dashboardLogoUrl:
+              data.branding.dashboardLogoUrl ||
+              DEFAULT_BRANDING.dashboardLogoUrl,
+            faviconUrl:
+              data.branding.faviconUrl || DEFAULT_BRANDING.faviconUrl,
+          });
+          if (data.branding.faviconUrl) {
+            const link =
+              document.querySelector('link[rel="icon"]') ||
+              document.createElement("link");
+            (link as HTMLLinkElement).setAttribute("rel", "icon");
+            (link as HTMLLinkElement).setAttribute(
+              "href",
+              data.branding.faviconUrl,
+            );
+            if (!link.parentNode) document.head.appendChild(link);
+          }
+        }
         setName(data.client.name || "");
         setEmail(data.client.email || "");
         setPhone(data.client.phone || "");
@@ -152,10 +179,10 @@ export default function ClientFormPage() {
     };
   }, [servicesOpen]);
 
-  const selectedServices = useMemo(
-    () => getServicesByIds(selectedIds),
-    [selectedIds],
-  );
+  const selectedServices = useMemo(() => {
+    const set = new Set(selectedIds);
+    return catalog.filter((service) => set.has(service.id));
+  }, [catalog, selectedIds]);
   const orderTotal = useMemo(
     () => sumServicePrices(selectedServices),
     [selectedServices],
@@ -252,12 +279,12 @@ export default function ClientFormPage() {
     <div className="min-h-dvh bg-[#EAE9F0]">
       <header className="bg-white border-b border-gray-100">
         <div className="mx-auto max-w-6xl px-5 sm:px-8 py-4">
-          <Image
-            src="/assets/logo.png"
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={branding.navLogoUrl || "/assets/logo.png"}
             alt="Netan Technologies"
             width={140}
             height={40}
-            priority
             className="object-contain h-9 w-auto"
           />
         </div>

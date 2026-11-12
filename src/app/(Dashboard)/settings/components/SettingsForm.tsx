@@ -1,20 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useAuth } from "@/src/components/AuthProvider";
 import ProfileTab from "./Profiletab";
 import PasswordTab from "./Passwordtab";
 import NotificationsTab from "./Notificationstab";
+import GeneralSettingsTab from "./GeneralSettingsTab";
+import ServiceTab from "./ServiceTab";
+import PaymentOptionTab from "./PaymentOptionTab";
 
-const TABS = [
+const BASE_TABS = [
   { id: "profile", label: "Profile" },
   { id: "password", label: "Change password" },
   { id: "notifications", label: "Notification" },
 ] as const;
 
-type TabId = (typeof TABS)[number]["id"];
+const SUPERADMIN_TABS = [
+  { id: "profile", label: "Profile" },
+  { id: "password", label: "Change password" },
+  { id: "general", label: "General Settings" },
+  { id: "service", label: "Service" },
+  { id: "payment", label: "Payment option" },
+  { id: "notifications", label: "Notification" },
+] as const;
+
+type TabId =
+  | (typeof BASE_TABS)[number]["id"]
+  | (typeof SUPERADMIN_TABS)[number]["id"];
 
 export default function SettingsForm() {
+  const { isSuperadmin, loading } = useAuth();
+  const tabs = useMemo(
+    () => (isSuperadmin ? SUPERADMIN_TABS : BASE_TABS),
+    [isSuperadmin],
+  );
   const [active, setActive] = useState<TabId>("profile");
+
+  const wideContent =
+    active === "general" || active === "service" || active === "payment";
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-2xl border border-gray-100 p-8 min-h-[560px]">
+        <p className="text-sm text-gray-500">Loading settings…</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8 lg:p-10 min-h-[560px] flex flex-col md:flex-row gap-8 md:gap-12 lg:gap-16">
@@ -22,7 +53,7 @@ export default function SettingsForm() {
         aria-label="Settings sections"
         className="flex md:flex-col gap-1 md:w-44 shrink-0 overflow-x-auto"
       >
-        {TABS.map((tab) => {
+        {tabs.map((tab) => {
           const isActive = tab.id === active;
           return (
             <button
@@ -42,9 +73,12 @@ export default function SettingsForm() {
         })}
       </nav>
 
-      <div className="flex-1 min-w-0 max-w-2xl">
+      <div className={`flex-1 min-w-0 ${wideContent ? "" : "max-w-2xl"}`}>
         {active === "profile" && <ProfileTab />}
         {active === "password" && <PasswordTab />}
+        {active === "general" && isSuperadmin && <GeneralSettingsTab />}
+        {active === "service" && isSuperadmin && <ServiceTab />}
+        {active === "payment" && isSuperadmin && <PaymentOptionTab />}
         {active === "notifications" && <NotificationsTab />}
       </div>
     </div>
