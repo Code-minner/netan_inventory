@@ -40,7 +40,7 @@ create table if not exists public.payments (
   amount text not null,
   paid_amount text not null,
   paid_date text not null,
-  status text not null default 'Not Completed' check (status in ('Completed', 'Not Completed')),
+  status text not null default 'Pending' check (status in ('Completed', 'Pending')),
   payment_percent integer,
   payment_proof_url text,
   created_at timestamptz not null default now()

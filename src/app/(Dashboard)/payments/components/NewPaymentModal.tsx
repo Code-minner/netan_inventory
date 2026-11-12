@@ -18,9 +18,7 @@ export default function NewPaymentModal({ isOpen, onClose, onCreated }: Props) {
   const [servicesCount, setServicesCount] = useState("1");
   const [amount, setAmount] = useState("");
   const [paidAmount, setPaidAmount] = useState("");
-  const [status, setStatus] = useState<"Completed" | "Not Completed">(
-    "Completed",
-  );
+  const [status, setStatus] = useState<"Completed" | "Pending">("Pending");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -37,7 +35,7 @@ export default function NewPaymentModal({ isOpen, onClose, onCreated }: Props) {
     setServicesCount("1");
     setAmount("");
     setPaidAmount("");
-    setStatus("Completed");
+    setStatus("Pending");
     setError("");
   };
 
@@ -182,12 +180,12 @@ export default function NewPaymentModal({ isOpen, onClose, onCreated }: Props) {
           <select
             value={status}
             onChange={(e) =>
-              setStatus(e.target.value as "Completed" | "Not Completed")
+              setStatus(e.target.value as "Completed" | "Pending")
             }
             className="w-full px-3.5 py-3 text-sm border border-gray-200 rounded-lg outline-none bg-white focus:border-[#2E2A5C]/40"
           >
+            <option value="Pending">Pending</option>
             <option value="Completed">Completed</option>
-            <option value="Not Completed">Not Completed</option>
           </select>
         </div>
 

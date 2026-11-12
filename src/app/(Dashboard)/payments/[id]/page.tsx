@@ -4,8 +4,14 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRightIcon, BackArrow, EditIcon } from "@/public/svg/svg";
+import { useAuth } from "@/src/components/AuthProvider";
 import { apiFetch } from "@/src/lib/api";
 import { formatDate, formatTime } from "@/src/lib/format";
+import {
+  isPaymentCompleted,
+  paymentStatusBadgeClass,
+  paymentStatusLabel,
+} from "@/src/lib/payment-status";
 import type { Client, Payment } from "@/src/lib/types";
 
 function fileNameFromUrl(url: string) {
@@ -20,10 +26,14 @@ function fileNameFromUrl(url: string) {
 export default function PaymentDetailsPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
+  const { canWrite } = useAuth();
   const [payment, setPayment] = useState<Payment | null>(null);
   const [client, setClient] = useState<Client | null>(null);
   const [loading, setLoading] = useState(true);
+  const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState("");
+  const [actionError, setActionError] = useState("");
+  const [actionMessage, setActionMessage] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -65,6 +75,30 @@ export default function PaymentDetailsPage() {
     );
   }, [client, payment]);
 
+  const confirmPayment = async () => {
+    if (!payment || confirming) return;
+    setActionError("");
+    setActionMessage("");
+    setConfirming(true);
+    try {
+      const data = await apiFetch<{ payment: Payment }>(
+        `/api/payments/${payment.id}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({ status: "Completed" }),
+        },
+      );
+      setPayment(data.payment);
+      setActionMessage("Payment confirmed.");
+    } catch (err) {
+      setActionError(
+        err instanceof Error ? err.message : "Could not confirm payment",
+      );
+    } finally {
+      setConfirming(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="bg-white rounded-2xl border border-gray-100 min-h-[calc(100dvh-11rem)] flex items-center justify-center">
@@ -92,7 +126,9 @@ export default function PaymentDetailsPage() {
     ? formatDate(client.createdAt)
     : formatDate(payment.createdAt);
   const dateTime = `${formatDate(payment.createdAt)} - ${formatTime(payment.createdAt)}`;
-  const completed = payment.status === "Completed";
+  const completed = isPaymentCompleted(payment.status);
+  const statusLabel = paymentStatusLabel(payment.status);
+  const statusClass = paymentStatusBadgeClass(payment.status);
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 w-full min-h-[calc(100dvh-11rem)] px-6 sm:px-8 lg:px-10 py-7 sm:py-8">
@@ -117,17 +153,35 @@ export default function PaymentDetailsPage() {
               since {since}
             </p>
             <span
-              className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                completed
-                  ? "bg-green-50 text-green-600"
-                  : "bg-red-50 text-red-500"
-              }`}
+              className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${statusClass}`}
             >
-              {completed ? "Completed" : "Not completed"}
+              {statusLabel}
             </span>
           </div>
         </div>
+
+        {!completed && canWrite ? (
+          <button
+            type="button"
+            onClick={() => void confirmPayment()}
+            disabled={confirming}
+            className="text-sm font-medium text-white bg-[#2E2A5C] hover:bg-[#25214a] rounded-lg px-5 py-2.5 disabled:opacity-60"
+          >
+            {confirming ? "Confirming…" : "Confirm payment"}
+          </button>
+        ) : null}
       </div>
+
+      {actionError ? (
+        <p className="mt-5 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+          {actionError}
+        </p>
+      ) : null}
+      {actionMessage ? (
+        <p className="mt-5 text-sm text-green-700 bg-green-50 border border-green-100 rounded-lg px-3 py-2">
+          {actionMessage}
+        </p>
+      ) : null}
 
       <section className="py-8 border-b border-gray-100">
         <div className="flex items-center justify-between mb-5">
@@ -156,13 +210,9 @@ export default function PaymentDetailsPage() {
           <div>
             <p className="text-xs text-gray-400 mb-1.5">Status</p>
             <span
-              className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                completed
-                  ? "bg-green-50 text-green-600"
-                  : "bg-red-50 text-red-500"
-              }`}
+              className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${statusClass}`}
             >
-              {completed ? "Completed" : "Not completed"}
+              {statusLabel}
             </span>
           </div>
           <Info label="Amount" value={payment.amount} />
@@ -195,6 +245,23 @@ export default function PaymentDetailsPage() {
         ) : (
           <p className="text-sm text-gray-400">No payment proof uploaded.</p>
         )}
+
+        {!completed && canWrite ? (
+          <div className="mt-8 max-w-xl rounded-xl border border-amber-100 bg-amber-50/60 px-4 py-4">
+            <p className="text-sm text-amber-800">
+              This payment is pending verification. Review the proof, then
+              confirm it to mark the payment as completed.
+            </p>
+            <button
+              type="button"
+              onClick={() => void confirmPayment()}
+              disabled={confirming}
+              className="mt-3 text-sm font-medium text-white bg-[#2E2A5C] hover:bg-[#25214a] rounded-lg px-5 py-2.5 disabled:opacity-60"
+            >
+              {confirming ? "Confirming…" : "Confirm payment"}
+            </button>
+          </div>
+        ) : null}
 
         {client ? (
           <p className="text-xs text-gray-400 mt-8">

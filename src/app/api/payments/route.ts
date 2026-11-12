@@ -9,6 +9,7 @@ import {
   listPayments,
   makeInitials,
 } from "@/src/lib/store";
+import { normalizePaymentStatus } from "@/src/lib/payment-status";
 import type { Payment } from "@/src/lib/types";
 
 export async function GET() {
@@ -29,9 +30,9 @@ export async function POST(request: Request) {
     const amount = String(body.amount || "").trim();
     const paidAmount = String(body.paidAmount || "").trim();
     const servicesCount = Number(body.servicesCount) || 1;
-    const status = (
-      body.status === "Not Completed" ? "Not Completed" : "Completed"
-    ) as Payment["status"];
+    const status = normalizePaymentStatus(
+      body.status === "Completed" ? "Completed" : "Pending",
+    );
     const clientId = body.clientId ? String(body.clientId) : undefined;
 
     if (!name || !amount || !paidAmount) {

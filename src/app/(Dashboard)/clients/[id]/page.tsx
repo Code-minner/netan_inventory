@@ -9,6 +9,10 @@ import { useSetPageBreadcrumb } from "@/src/components/PageHeadingContext";
 import { useAuth } from "@/src/components/AuthProvider";
 import { apiFetch } from "@/src/lib/api";
 import { formatDate } from "@/src/lib/format";
+import {
+  paymentStatusBadgeClass,
+  paymentStatusLabel,
+} from "@/src/lib/payment-status";
 import type { Client, Payment } from "@/src/lib/types";
 
 function fileNameFromUrl(url: string) {
@@ -325,15 +329,9 @@ export default function ClientDetailsPage() {
                 </div>
                 <div>
                   <span
-                    className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                      payment.status === "Completed"
-                        ? "bg-green-50 text-green-600"
-                        : "bg-red-50 text-red-500"
-                    }`}
+                    className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${paymentStatusBadgeClass(payment.status)}`}
                   >
-                    {payment.status === "Completed"
-                      ? "Completed"
-                      : "Not completed"}
+                    {paymentStatusLabel(payment.status)}
                   </span>
                 </div>
                 <div className="hidden sm:flex justify-end text-gray-300">

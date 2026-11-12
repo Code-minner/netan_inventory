@@ -9,9 +9,13 @@ import {
 } from "lucide-react";
 import { SearchIcon, SortIcon } from "@/public/svg/svg";
 import { apiFetch } from "@/src/lib/api";
+import {
+  paymentStatusBadgeClass,
+  paymentStatusLabel,
+} from "@/src/lib/payment-status";
 import type { Payment, PaymentStatus } from "@/src/lib/types";
 
-type Tab = "All" | "Completed" | "Not Completed";
+type Tab = "All" | "Pending" | "Completed";
 type ServicesFilter = "All" | "1" | "2+";
 type SortKey =
   | "newest"
@@ -21,7 +25,7 @@ type SortKey =
   | "amount-high"
   | "amount-low";
 
-const TABS: Tab[] = ["All", "Completed", "Not Completed"];
+const TABS: Tab[] = ["All", "Pending", "Completed"];
 const PAGE_SIZE = 6;
 
 const SERVICE_FILTERS: { value: ServicesFilter; label: string }[] = [
@@ -45,16 +49,11 @@ function parseMoney(value: string) {
 }
 
 function StatusBadge({ status }: { status: PaymentStatus }) {
-  const styles =
-    status === "Completed"
-      ? "bg-green-50 text-green-600"
-      : "bg-red-50 text-red-500";
-
   return (
     <span
-      className={`inline-block whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium ${styles}`}
+      className={`inline-block whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium ${paymentStatusBadgeClass(status)}`}
     >
-      {status}
+      {paymentStatusLabel(status)}
     </span>
   );
 }

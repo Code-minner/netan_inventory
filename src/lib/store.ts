@@ -1,4 +1,5 @@
 import { supabaseRest } from "./supabase";
+import { normalizePaymentStatus } from "./payment-status";
 import type {
   Client,
   NotificationItem,
@@ -45,7 +46,7 @@ type PaymentRow = {
   amount: string;
   paid_amount: string;
   paid_date: string;
-  status: Payment["status"];
+  status: string;
   payment_percent?: number | null;
   payment_proof_url?: string | null;
   created_at: string;
@@ -178,7 +179,7 @@ function mapPayment(row: PaymentRow): Payment {
     amount: row.amount,
     paidAmount: row.paid_amount,
     paidDate: row.paid_date,
-    status: row.status,
+    status: normalizePaymentStatus(row.status),
     paymentPercent: row.payment_percent ?? undefined,
     paymentProofUrl: row.payment_proof_url || undefined,
     createdAt: row.created_at,
@@ -354,11 +355,29 @@ export async function insertPayment(payment: Payment) {
       amount: payment.amount,
       paid_amount: payment.paidAmount,
       paid_date: payment.paidDate,
-      status: payment.status,
+      status: normalizePaymentStatus(payment.status),
       created_at: payment.createdAt,
     }),
   });
   return mapPayment(firstRow(rows));
+}
+
+export async function updatePayment(
+  id: string,
+  patch: Partial<Pick<Payment, "status" | "paidAmount" | "paidDate">>,
+) {
+  const body: Record<string, unknown> = {};
+  if (patch.status !== undefined) {
+    body.status = normalizePaymentStatus(patch.status);
+  }
+  if (patch.paidAmount !== undefined) body.paid_amount = patch.paidAmount;
+  if (patch.paidDate !== undefined) body.paid_date = patch.paidDate;
+
+  const rows = await supabaseRest<PaymentRow[]>(
+    `/payments?id=eq.${encodeURIComponent(id)}`,
+    { method: "PATCH", body: JSON.stringify(body) },
+  );
+  return rows[0] ? mapPayment(rows[0]) : null;
 }
 
 export async function listTeam() {

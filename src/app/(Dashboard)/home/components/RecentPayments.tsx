@@ -1,6 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import {
+  paymentStatusBadgeClass,
+  paymentStatusLabel,
+} from "@/src/lib/payment-status";
 import type { Payment } from "@/src/lib/types";
 
 export default function RecentPayments({ payments }: { payments: Payment[] }) {
@@ -48,13 +52,9 @@ export default function RecentPayments({ payments }: { payments: Payment[] }) {
               </div>
               <div className="flex justify-end">
                 <span
-                  className={`text-xs px-3 py-1 rounded-full font-medium ${
-                    payment.status === "Completed"
-                      ? "bg-green-50 text-green-600"
-                      : "bg-red-50 text-red-500"
-                  }`}
+                  className={`text-xs px-3 py-1 rounded-full font-medium ${paymentStatusBadgeClass(payment.status)}`}
                 >
-                  {payment.status}
+                  {paymentStatusLabel(payment.status)}
                 </span>
               </div>
             </Link>

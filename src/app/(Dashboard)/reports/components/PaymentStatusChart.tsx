@@ -20,7 +20,7 @@ export default function PaymentStatusChart({
       color: "#2E2A5C",
     },
     {
-      name: "Outstanding",
+      name: "Pending",
       value: outstanding,
       percent: total
         ? `${((outstanding / total) * 100).toFixed(1)}%`

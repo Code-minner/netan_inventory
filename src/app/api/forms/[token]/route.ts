@@ -191,7 +191,7 @@ export async function POST(request: Request, { params }: Params) {
       amount: formatNaira(orderTotal),
       paidAmount: formatNaira(payNow),
       paidDate: formatDisplayDate(now),
-      status: "Not Completed",
+      status: "Pending",
       paymentPercent,
       paymentProofUrl,
       createdAt: now.toISOString(),
@@ -200,7 +200,7 @@ export async function POST(request: Request, { params }: Params) {
     const stamp = formatNotificationTime(now);
     await insertNotification({
       id: createId(),
-      text: `${name} submitted onboarding and payment proof (${paymentPercent}%).`,
+      text: `${name} submitted payment proof (${paymentPercent}%). Status: Pending confirmation.`,
       time: stamp.time,
       unread: true,
       dateGroup: stamp.dateGroup,

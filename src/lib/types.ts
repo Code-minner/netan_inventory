@@ -1,6 +1,6 @@
 export type ClientStatus = "Ended" | "Ongoing";
 export type FormStatus = "pending" | "completed";
-export type PaymentStatus = "Completed" | "Not Completed";
+export type PaymentStatus = "Completed" | "Pending";
 export type MemberStatus = "Active" | "Ended" | "Invited";
 
 export type SelectedService = {

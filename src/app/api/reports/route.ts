@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { handleRouteError, requireAdmin } from "@/src/lib/auth";
 import { parseAmount } from "@/src/lib/format";
+import { isPaymentCompleted } from "@/src/lib/payment-status";
 import { listClients, listPayments } from "@/src/lib/store";
 
 const MONTHS = [
@@ -34,21 +35,25 @@ export async function GET(request: NextRequest) {
       listPayments(),
     ]);
 
-    const totalRevenue = payments.reduce(
+    const confirmedPayments = payments.filter((payment) =>
+      isPaymentCompleted(payment.status),
+    );
+    const pendingPayments = payments.filter(
+      (payment) => !isPaymentCompleted(payment.status),
+    );
+
+    const totalRevenue = confirmedPayments.reduce(
       (sum, payment) => sum + parseAmount(payment.paidAmount),
       0,
     );
-    const outstandingAmount = payments.reduce((sum, payment) => {
-      const due = parseAmount(payment.amount) - parseAmount(payment.paidAmount);
-      return sum + Math.max(0, due);
+    const outstandingAmount = pendingPayments.reduce((sum, payment) => {
+      return sum + parseAmount(payment.paidAmount || payment.amount);
     }, 0);
 
-    const paidCount = payments.filter((p) => p.status === "Completed").length;
-    const outstandingCount = payments.filter(
-      (p) => p.status !== "Completed",
-    ).length;
+    const paidCount = confirmedPayments.length;
+    const outstandingCount = pendingPayments.length;
 
-    const revenueThisMonth = payments
+    const revenueThisMonth = confirmedPayments
       .filter((payment) => {
         const created = new Date(payment.createdAt);
         return (
@@ -58,7 +63,7 @@ export async function GET(request: NextRequest) {
       })
       .reduce((sum, payment) => sum + parseAmount(payment.paidAmount), 0);
 
-    const revenueLastMonth = payments
+    const revenueLastMonth = confirmedPayments
       .filter((payment) => {
         const created = new Date(payment.createdAt);
         return (
@@ -79,7 +84,7 @@ export async function GET(request: NextRequest) {
 
     const revenue = MONTHS.map((month, index) => ({
       month,
-      revenue: payments
+      revenue: confirmedPayments
         .filter((payment) => {
           const created = new Date(payment.createdAt);
           return (
